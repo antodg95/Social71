@@ -1,0 +1,16 @@
+version: '3.6'
+
+networks:
+  default:
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-social71
+    hostname: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: social71
+      POSTGRES_USER: social71
+      POSTGRES_PASSWORD: social71
