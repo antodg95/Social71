@@ -1,5 +1,5 @@
 CREATE TABLE users (
-    id serial,
+    id BIGINT GENERATED ALWAYS AS IDENTITY,
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(100) NOT NULL,
     email varchar (255) UNIQUE NOT NULL,
@@ -8,8 +8,8 @@ CREATE TABLE users (
 );
 
 CREATE TABLE whispers (
-    id SERIAL,
-    user_id INT NOT NULL,
+    id BIGINT GENERATED ALWAYS AS IDENTITY,
+    user_id BIGINT NOT NULL,
     text varchar(255) NOT NULL,
     created_on TIMESTAMP NOT NULL,
     PRIMARY KEY (id),
