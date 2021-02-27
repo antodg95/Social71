@@ -1,5 +1,6 @@
 package it.digiulio.social71.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -25,8 +26,4 @@ public class User {
     private String email;
 
     private Timestamp createdOn;
-
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
-    private Set<Whisper> whispers;
 }
