@@ -5,9 +5,8 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class ValidationException extends RuntimeException{
-
-    private static final long serialVersionUID = -4077220053151646124L;
+public class BadServiceRequestException extends CustomException{
+    private static final long serialVersionUID = 3691982677844159952L;
 
     private final String field;
 
@@ -15,7 +14,7 @@ public class ValidationException extends RuntimeException{
 
     private final List<String> domain;
 
-    public ValidationException(String field, String value, List<String> domain) {
+    public BadServiceRequestException(String field, String value, List<String> domain) {
         super(buildMessage(field, value, domain));
         this.field = field;
         this.value = value;
