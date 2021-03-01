@@ -25,4 +25,6 @@ public class Whisper {
     @ManyToOne
     @JoinColumn (name = "user_id", referencedColumnName = "id", nullable = false)
     private User userId;
+
+    private Boolean active;
 }

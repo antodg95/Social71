@@ -26,4 +26,8 @@ public class User {
     private String email;
 
     private Timestamp createdOn;
+
+    private Boolean active;
+
+    private String deleteUuid;
 }
