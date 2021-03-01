@@ -8,9 +8,9 @@ public interface ICrudService<T> {
 
     Set<T> findAll();
 
-    Optional<T> findById(int id);
+    Optional<T> findById(Long id);
 
     T update(T entity);
 
-    T delete(int id);
+    T delete(Long id);
 }
