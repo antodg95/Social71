@@ -21,7 +21,7 @@ public class UserService implements ICrudService<User>{
     private final UserRepository userRepository;
 
     @Override
-    public User create(User user) {
+    public User create(User user) throws ValidationException, BadServiceRequestException{
         log.debug("create()");
         log.trace("\tuser: {}", user.toString());
 
@@ -51,7 +51,7 @@ public class UserService implements ICrudService<User>{
     }
 
     @Override
-    public User update(User user) {
+    public User update(User user) throws ValidationException, BadServiceRequestException{
         log.debug("update()");
         log.trace("\tuser: {}", user.toString());
 
@@ -66,7 +66,7 @@ public class UserService implements ICrudService<User>{
     }
 
     @Override
-    public User delete(Long id) {
+    public User delete(Long id) throws BadServiceRequestException{
         log.debug("delete()");
         log.trace("\tuser id: {}", id.toString());
 
@@ -112,7 +112,7 @@ public class UserService implements ICrudService<User>{
             throw new BadServiceRequestException("Username", user.getUsername(), List.of("already exists"));
         }
 
-        if (!EmailValidator.getInstance(true, true).isValid(user.getEmail())) {
+        if (!EmailValidator.getInstance().isValid(user.getEmail())) {
             throw new BadServiceRequestException("Email", user.getEmail(), List.of("must be a valid email address"));
         }
 

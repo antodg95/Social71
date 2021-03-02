@@ -2,6 +2,8 @@ package it.digiulio.social71.service;
 
 import static org.assertj.core.api.Assertions.*;
 
+import it.digiulio.social71.exception.BadServiceRequestException;
+import it.digiulio.social71.exception.ValidationException;
 import it.digiulio.social71.models.User;
 import it.digiulio.social71.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
@@ -35,15 +36,49 @@ public class UserServiceTest {
         this.userList = new ArrayList<>();
         this.id=0L;
 
-        Mockito.when(this.userRepository.save(Mockito.any(User.class)))
+        int defaultListSize = 20;
+
+        for (int i = 0; i<defaultListSize; i++) {
+            User user = new User();
+            ++id;
+            user.setUsername("username-" + id);
+            user.setEmail("test-" + id + "@test.com");
+            user.setPassword("password-" + id);
+            user.setId(id);
+            user.setActive(true);
+            userList.add(user);
+        }
+
+        Mockito.lenient().when(this.userRepository.save(Mockito.any(User.class)))
                 .thenAnswer( parameter -> {
                     User user = parameter.getArgument(0);
                     user.setId(++id);
                     user.setCreatedOn(Timestamp.from(Instant.now()));
+                    user.setActive(true);
                     this.userList.add(user);
                     return user;
                 } );
 
+        Mockito.lenient().when(this.userRepository.findUserByUsernameAndActiveIsTrue(Mockito.anyString()))
+                .thenAnswer( parameter -> {
+                    String username = parameter.getArgument(0);
+                    return userList.stream().filter(user -> user.getUsername().equals(username) && user.getActive().equals(true)).findFirst();
+                });
+
+        Mockito.lenient().when(this.userRepository.findUserByEmailAndActiveIsTrue(Mockito.anyString()))
+                .thenAnswer( parameter -> {
+                    String email = parameter.getArgument(0);
+                    return userList.stream().filter(user -> user.getEmail().equals(email) && user.getActive().equals(true)).findFirst();
+                });
+
+        Mockito.lenient().when(this.userRepository.findAll())
+                .thenReturn(new HashSet<>(userList));
+
+        Mockito.lenient().when(this.userRepository.findById(Mockito.anyLong()))
+                .thenAnswer( parameter -> {
+                    Long id = parameter.getArgument(0);
+                    return userList.stream().filter(user -> user.getId().equals(id)).findFirst();
+                });
     }
 
     @Test
@@ -58,17 +93,96 @@ public class UserServiceTest {
 
         assertThat(result).isNotNull();
         assertThat(result).usingRecursiveComparison().ignoringFields("id", "createdOn", "active").isEqualTo(user);
-        assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getId()).isEqualTo(id);
         assertThat(result.getActive()).isTrue();
 
         Mockito.verify(this.userRepository, Mockito.times(1)).save(user);
     }
 
-    //@Test
-    public void testCreateWithWrongInput() {
+    @Test
+    public void testCreateWithWrongEmail() {
         User user = new User();
         user.setUsername("username-test");
-        user.setEmail("antodg95@gmail.com");
+        user.setEmail("test@test");
         user.setPassword("password");
+
+        assertThatExceptionOfType(BadServiceRequestException.class)
+                .isThrownBy( () -> userService.create(user))
+                .withMessageContaining("Email");
+    }
+
+    @Test
+    public void testCreateWithNullUsername() {
+        User user = new User();
+        user.setUsername(null);
+        user.setEmail("test@test");
+        user.setPassword("password");
+
+        assertThatExceptionOfType(ValidationException.class)
+                .isThrownBy( () -> userService.create(user))
+                .withMessageContaining("Username");
+    }
+
+    @Test
+    public void testCreateWithExplicitId() {
+        User user = new User();
+        user.setUsername("username-test");
+        user.setEmail("test@test");
+        user.setPassword("password");
+        user.setId(71L);
+
+        user.setId(71L);
+        assertThatExceptionOfType(ValidationException.class)
+                .isThrownBy( () -> userService.create(user))
+                .withMessageContaining("Id");
+    }
+
+    @Test
+    public void testCreateWithUsernameAlreadyExisting() {
+        User user = new User();
+        user.setPassword("password");
+        user.setEmail("test@test.com");
+        user.setUsername("username-4");
+
+        assertThatExceptionOfType(BadServiceRequestException.class)
+                .isThrownBy(() -> userService.create(user))
+                .withMessageContaining("Username")
+                .withMessageContaining("already exists");
+    }
+
+    @Test
+    public void testCreateWithEmailAlreadyExisting() {
+        User user = new User();
+        user.setPassword("password");
+        user.setEmail("test-7@test.com");
+        user.setUsername("username-test");
+
+        assertThatExceptionOfType(BadServiceRequestException.class)
+                .isThrownBy(() -> userService.create(user))
+                .withMessageContaining("Email")
+                .withMessageContaining("already exists");
+    }
+
+    @Test
+    public void testFindAll() {
+        Set<User> users = userService.findAll();
+
+        assertThat(users.size()).isEqualTo(userList.size());
+    }
+
+    @Test
+    public void testFindByExistingId() {
+        Optional<User> optionalUser = userService.findById(7L);
+
+        assertThat(optionalUser).isPresent();
+        assertThat(optionalUser.get().getId()).isEqualTo(7L);
+        assertThat(optionalUser.get().getUsername()).isEqualTo("username-7");
+    }
+
+    @Test
+    public void testFindByNonExistingId() {
+        Optional<User> optionalUser = userService.findById(91L);
+
+        assertThat(optionalUser).isEmpty();
     }
 }
