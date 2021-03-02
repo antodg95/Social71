@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.*;
 
 @Service
@@ -25,7 +27,7 @@ public class UserService implements ICrudService<User>{
         log.debug("create()");
         log.trace("\tuser: {}", user.toString());
 
-        if (checkUserValidationConstraint(user)) {
+        if (checkUserValidationConstraint(user, true)) {
             log.debug("user in input is constraint ok");
         }
         if (checkUserBadServiceRequest(user)) {
@@ -34,6 +36,7 @@ public class UserService implements ICrudService<User>{
 
         //TODO: Check per la password. Vedere come gestirla correttamente.
 
+        user.setCreatedOn(Timestamp.from(Instant.now()));
         user.setActive(true);
 
         return userRepository.save(user);
@@ -55,12 +58,19 @@ public class UserService implements ICrudService<User>{
         log.debug("update()");
         log.trace("\tuser: {}", user.toString());
 
-        if (checkUserValidationConstraint(user)) {
+        if (checkUserValidationConstraint(user, false)) {
             log.debug("user in input is constraint ok");
         }
         if (checkUserBadServiceRequest(user)) {
             log.debug("User in input is valid for request");
         }
+
+        Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(user.getId());
+
+        if (optionalUser.isEmpty()) {
+            throw new BadServiceRequestException("User", user.getId().toString(), List.of("doesnt't exist"));
+        }
+
 
         return userRepository.save(user);
     }
@@ -70,7 +80,7 @@ public class UserService implements ICrudService<User>{
         log.debug("delete()");
         log.trace("\tuser id: {}", id.toString());
 
-        Optional<User> optionalUser = userRepository.findById(id);
+        Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(id);
 
         if (optionalUser.isEmpty()) {
             throw new BadServiceRequestException("Id", id.toString(), List.of("doesn't exist"));
@@ -85,9 +95,19 @@ public class UserService implements ICrudService<User>{
 
     }
 
-    private boolean checkUserValidationConstraint(User user) throws ValidationException{
-        if (user.getId() != null) {
-            throw new ValidationException("Id", user.getId().toString(), List.of("must be null"));
+    /**
+     * Check if the user in input is constraint ok.
+     *
+     * @param user User
+     * @param id True means the methods checks if the id is != null. False otherwise.
+     * @return true or throws ValidationException
+     * @throws ValidationException if user in input is constraint K.O.
+     */
+    private boolean checkUserValidationConstraint(User user, boolean id) throws ValidationException{
+        if (id) {
+            if (user.getId() != null) {
+                throw new ValidationException("Id", user.getId().toString(), List.of("must be null"));
+            }
         }
 
         if (user.getUsername() == null) {
