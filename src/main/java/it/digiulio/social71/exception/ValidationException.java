@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class ValidationException extends RuntimeException{
+public class ValidationException extends CustomException{
 
     private static final long serialVersionUID = -4077220053151646124L;
 

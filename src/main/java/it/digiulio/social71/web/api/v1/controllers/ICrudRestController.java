@@ -10,13 +10,13 @@ public interface ICrudRestController<T> {
             throws ValidationException, BadServiceRequestException;
 
     @GetMapping("/{id}")
-    T findById(@PathVariable(name = "id") Integer id) throws ValidationException;
+    T findById(@PathVariable(name = "id") Long id) throws ValidationException;
 
     @PutMapping("/{id}")
-    T update(@PathVariable(name = "id") Integer id, @RequestBody T entity)
+    T update(@PathVariable(name = "id") Long id, @RequestBody T entity)
             throws BadServiceRequestException, ValidationException;
 
     @DeleteMapping("/{id}")
-    T delete(@PathVariable(name = "id") Integer id)
+    T delete(@PathVariable(name = "id") Long id)
             throws BadServiceRequestException;
 }

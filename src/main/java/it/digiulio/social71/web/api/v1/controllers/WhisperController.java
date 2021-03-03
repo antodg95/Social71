@@ -2,7 +2,7 @@ package it.digiulio.social71.web.api.v1.controllers;
 
 import it.digiulio.social71.exception.BadServiceRequestException;
 import it.digiulio.social71.exception.ValidationException;
-import it.digiulio.social71.models.Whisper;
+import it.digiulio.social71.web.api.v1.dto.WhisperDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,26 +10,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/whispers")
-public class WhisperController implements ICrudRestController<Whisper>{
-
+public class WhisperController implements ICrudRestController<WhisperDTO>{
 
     @Override
-    public Whisper create(Whisper entity) throws ValidationException, BadServiceRequestException {
+    public WhisperDTO create(WhisperDTO whisperDTO) throws ValidationException, BadServiceRequestException {
         return null;
     }
 
     @Override
-    public Whisper findById(Integer id) throws ValidationException {
+    public WhisperDTO findById(Long id) throws ValidationException {
         return null;
     }
 
     @Override
-    public Whisper update(Integer id, Whisper entity) throws BadServiceRequestException, ValidationException {
+    public WhisperDTO update(Long id, WhisperDTO whisperDTO) throws BadServiceRequestException, ValidationException {
         return null;
     }
 
     @Override
-    public Whisper delete(Integer id) throws BadServiceRequestException {
+    public WhisperDTO delete(Long id) throws BadServiceRequestException {
         return null;
     }
 }
