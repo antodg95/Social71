@@ -49,7 +49,7 @@ public class WhisperController implements ICrudRestController<WhisperDTO>{
         Optional<Whisper> whisper = this.whisperService.findById(id);
 
         if (whisper.isEmpty()) {
-            throw new NotFoundException(id.toString(), "User");
+            throw new NotFoundException(id.toString(), "Whisper");
         }
 
         return this.modelMapper.map(whisper.get(), WhisperDTO.class);
