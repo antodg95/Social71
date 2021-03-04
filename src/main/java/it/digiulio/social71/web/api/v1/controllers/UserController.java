@@ -23,7 +23,7 @@ public class UserController implements ICrudRestController<UserDTO>{
     @Override
     public UserDTO create(UserDTO userDTO){
         log.debug("POST: api/v1/users - create");
-        log.trace("\tuser: {}", userDTO);
+        log.trace("user: {}", userDTO);
 
         User user = this.modelMapper.map(userDTO, User.class);
 
@@ -35,8 +35,18 @@ public class UserController implements ICrudRestController<UserDTO>{
     @Override
     public UserDTO findById(Long id) throws ValidationException {
         log.debug("GET: api/v1/users/{id} - findById ");
-        log.trace("\tid: {}", id);
-        return null;
+        log.trace("id: {}", id);
+        if (id < 0) {
+            throw new BadServiceRequestException("Id", id.toString(), List.of("must be greater than 0"));
+        }
+
+        Optional<User> user = this.userService.findById(id);
+
+        if (user.isEmpty()) {
+            throw new NotFoundException(id.toString(), "User");
+        }
+
+        return this.modelMapper.map(user.get(), UserDTO.class);
     }
 
     @Override

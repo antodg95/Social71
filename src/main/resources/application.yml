@@ -17,3 +17,9 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: validate
+
+logging:
+  level:
+    it:
+      digiulio:
+        social71: TRACE

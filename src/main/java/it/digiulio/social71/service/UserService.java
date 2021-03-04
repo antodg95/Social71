@@ -25,7 +25,7 @@ public class UserService implements ICrudService<User>{
     @Override
     public User create(User user) throws ValidationException, BadServiceRequestException{
         log.debug("create()");
-        log.trace("\tuser: {}", user.toString());
+        log.trace("user: {}", user.toString());
 
         if (checkUserValidationConstraint(user, true)) {
             log.debug("user in input is constraint ok");
@@ -56,7 +56,7 @@ public class UserService implements ICrudService<User>{
     @Override
     public User update(User user) throws ValidationException, BadServiceRequestException{
         log.debug("update()");
-        log.trace("\tuser: {}", user.toString());
+        log.trace("user: {}", user.toString());
 
         if (checkUserValidationConstraint(user, false)) {
             log.debug("user in input is constraint ok");
@@ -78,7 +78,7 @@ public class UserService implements ICrudService<User>{
     @Override
     public User delete(Long id) throws BadServiceRequestException{
         log.debug("delete()");
-        log.trace("\tuser id: {}", id.toString());
+        log.trace("user id: {}", id.toString());
 
         Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(id);
 
