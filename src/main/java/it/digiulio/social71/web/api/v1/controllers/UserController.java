@@ -1,5 +1,11 @@
 package it.digiulio.social71.web.api.v1.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.digiulio.social71.exception.BadServiceRequestException;
 import it.digiulio.social71.exception.NotFoundException;
 import it.digiulio.social71.exception.ValidationException;
@@ -25,7 +31,13 @@ public class UserController implements ICrudRestController<UserDTO>{
     private final ModelMapper modelMapper;
 
     @Override
-    public UserDTO create(UserDTO userDTO){
+    @Operation(summary = "Create User", tags = {"User"}, responses = {
+            @ApiResponse(responseCode = "200", description = "The User", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Service Request Exception or Validation Exception")
+    })
+    public UserDTO create(
+            @RequestBody(description = "User that needs to be created", required = true) UserDTO userDTO
+    ) throws BadServiceRequestException, ValidationException {
         log.debug("POST: api/v1/users - create");
         log.trace("user: {}", userDTO);
 
@@ -37,7 +49,14 @@ public class UserController implements ICrudRestController<UserDTO>{
     }
 
     @Override
-    public UserDTO findById(Long id) throws ValidationException {
+    @Operation(summary = "Find User by ID", tags = {"User"}, responses = {
+            @ApiResponse(responseCode = "200", description = "The User", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Service Request, id must be greater than 0"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    public UserDTO findById(
+            @Parameter(description = "User's Id that need to be fetched. Must be > 0", required = true) Long id
+    ) throws BadServiceRequestException, NotFoundException {
         log.debug("GET: api/v1/users/{id} - findById ");
         log.trace("id: {}", id);
         if (id < 0) {
@@ -54,7 +73,14 @@ public class UserController implements ICrudRestController<UserDTO>{
     }
 
     @Override
-    public UserDTO update(Long id, UserDTO userDTO) throws BadServiceRequestException, ValidationException {
+    @Operation(summary = "Update User", tags = {"User"}, responses = {
+            @ApiResponse(responseCode = "200", description = "The User", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Service Request Exception or Validation Exception."),
+    })
+    public UserDTO update(
+            @Parameter(description = "User's Id that need to be updated. Must be > 0", required = true) Long id,
+            @RequestBody(description = "User's fields that need to be updated", required = true) UserDTO userDTO
+    ) throws BadServiceRequestException, ValidationException {
         log.debug("PUT: api/v1/users/{id} - update");
         log.trace("id: {}, user:{}", id, userDTO);
 
@@ -71,7 +97,13 @@ public class UserController implements ICrudRestController<UserDTO>{
     }
 
     @Override
-    public UserDTO delete(Long id) throws BadServiceRequestException {
+    @Operation(summary = "Delete User", tags = {"User"}, responses = {
+            @ApiResponse(responseCode = "200", description = "The User", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Service Request Exception: User doesn't exist or Id < 0"),
+    })
+    public UserDTO delete(
+            @Parameter(description = "User's Id that need to be deleted. Must be > 0", required = true) Long id
+    ) throws BadServiceRequestException {
         log.debug("DELETE: api/v1/users/{id} - delete");
         log.trace("id: {}", id);
 

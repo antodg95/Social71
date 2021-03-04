@@ -50,6 +50,14 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Swagger -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.5.2</version>
+        </dependency>
+
+
         <!-- Utils -->
         <dependency>
             <groupId>com.google.guava</groupId>

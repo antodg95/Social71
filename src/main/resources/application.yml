@@ -23,3 +23,7 @@ logging:
     it:
       digiulio:
         social71: TRACE
+
+springdoc:
+  api-docs:
+    path: "/v1/api-docs"
