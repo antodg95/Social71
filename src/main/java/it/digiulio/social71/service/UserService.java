@@ -58,21 +58,35 @@ public class UserService implements ICrudService<User>{
         log.debug("update()");
         log.trace("user: {}", user.toString());
 
-        if (checkUserValidationConstraint(user, false)) {
-            log.debug("user in input is constraint ok");
-        }
-        if (checkUserBadServiceRequest(user)) {
-            log.debug("User in input is valid for request");
-        }
-
         Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(user.getId());
 
         if (optionalUser.isEmpty()) {
             throw new BadServiceRequestException("User", user.getId().toString(), List.of("doesnt't exist"));
         }
 
+        User userFound = optionalUser.get();
 
-        return userRepository.save(user);
+        if (user.getUsername() != null && !user.getUsername().equals(userFound.getUsername())) {
+            Optional<User> optionalUserByUsername = userRepository.findUserByUsernameAndActiveIsTrue(user.getUsername());
+            if (optionalUserByUsername.isPresent()) {
+                throw new BadServiceRequestException("Username", user.getUsername(), List.of("already exists"));
+            }
+        }
+        userFound.setUsername(user.getUsername() == null ? userFound.getUsername() : user.getUsername());
+
+        if (user.getEmail() != null && !user.getEmail().equals(userFound.getEmail())) {
+            if (!EmailValidator.getInstance().isValid(user.getEmail())) {
+                throw new BadServiceRequestException("Email", user.getEmail(), List.of("must be a valid email address"));
+            }
+
+            Optional<User> optionalUserByEmail = userRepository.findUserByEmailAndActiveIsTrue(user.getEmail());
+            if (optionalUserByEmail.isPresent()){
+                throw new BadServiceRequestException("Email", user.getEmail(), List.of("already exists"));
+            }
+        }
+        userFound.setEmail(user.getEmail() == null ? userFound.getEmail() : user.getEmail());
+
+        return userRepository.save(userFound);
     }
 
     @Override

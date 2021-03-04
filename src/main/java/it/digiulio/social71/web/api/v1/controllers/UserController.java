@@ -1,6 +1,7 @@
 package it.digiulio.social71.web.api.v1.controllers;
 
 import it.digiulio.social71.exception.BadServiceRequestException;
+import it.digiulio.social71.exception.NotFoundException;
 import it.digiulio.social71.exception.ValidationException;
 import it.digiulio.social71.models.User;
 import it.digiulio.social71.service.UserService;
@@ -10,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -51,11 +55,33 @@ public class UserController implements ICrudRestController<UserDTO>{
 
     @Override
     public UserDTO update(Long id, UserDTO userDTO) throws BadServiceRequestException, ValidationException {
-        return null;
+        log.debug("PUT: api/v1/users/{id} - update");
+        log.trace("id: {}, user:{}", id, userDTO);
+
+        if (id < 0) {
+            throw new BadServiceRequestException("Id", id.toString(), List.of("must be greater than 0"));
+        }
+
+        userDTO.setId(id);
+        User user = this.modelMapper.map(userDTO, User.class);
+        user = this.userService.update(user);
+
+        log.trace("updated user: {}", user);
+        return this.modelMapper.map(user, UserDTO.class);
     }
 
     @Override
     public UserDTO delete(Long id) throws BadServiceRequestException {
-        return null;
+        log.debug("DELETE: api/v1/users/{id} - delete");
+        log.trace("id: {}", id);
+
+        if (id < 0) {
+            throw new BadServiceRequestException("Id", id.toString(), List.of("must be greater than 0"));
+        }
+
+        User user = this.userService.delete(id);
+
+        log.trace("deleted user: {}", user);
+        return this.modelMapper.map(user, UserDTO.class);
     }
 }
