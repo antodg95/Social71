@@ -1,6 +1,5 @@
 package it.digiulio.social71.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,7 +23,7 @@ public class Whisper {
 
     @ManyToOne
     @JoinColumn (name = "user_id", referencedColumnName = "id", nullable = false)
-    private User userId;
+    private User user;
 
     private Boolean active;
 }

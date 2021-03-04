@@ -46,7 +46,7 @@ public class WhisperDtoTest {
         this.whisper.setText("whisper-test");
         this.whisper.setCreatedOn(Timestamp.from(Instant.now()));
         this.whisper.setActive(true);
-        this.whisper.setUserId(user);
+        this.whisper.setUser(user);
     }
 
     @Test
@@ -66,10 +66,10 @@ public class WhisperDtoTest {
         assertThat(whisperDTO.getId()).isEqualTo(whisper.getId());
         assertThat(whisperDTO.getText()).isEqualTo(whisper.getText());
         assertThat(whisperDTO.getCreatedOn()).isEqualTo(whisper.getCreatedOn());
-        assertThat(whisperDTO.getUserId().getId()).isEqualTo(whisper.getUserId().getId());
-        assertThat(whisperDTO.getUserId().getUsername()).isEqualTo(whisper.getUserId().getUsername());
-        assertThat(whisperDTO.getUserId().getEmail()).isEqualTo(whisper.getUserId().getEmail());
-        assertThat(whisperDTO.getUserId().getPassword()).isEqualTo(whisper.getUserId().getPassword());
+        assertThat(whisperDTO.getUser().getId()).isEqualTo(whisper.getUser().getId());
+        assertThat(whisperDTO.getUser().getUsername()).isEqualTo(whisper.getUser().getUsername());
+        assertThat(whisperDTO.getUser().getEmail()).isEqualTo(whisper.getUser().getEmail());
+        assertThat(whisperDTO.getUser().getPassword()).isEqualTo(whisper.getUser().getPassword());
     }
 
     @Test
@@ -81,10 +81,10 @@ public class WhisperDtoTest {
         assertThat(whisper1.getCreatedOn()).isEqualTo(whisper.getCreatedOn());
         assertThat(whisper1.getText()).isEqualTo(whisper.getText());
         assertThat(whisper1.getActive()).isNull();
-        assertThat(whisper1.getUserId().getUsername()).isEqualTo(whisper.getUserId().getUsername());
-        assertThat(whisper1.getUserId().getEmail()).isEqualTo(whisper.getUserId().getEmail());
-        assertThat(whisper1.getUserId().getDeleteUuid()).isNull();
-        assertThat(whisper1.getUserId().getCreatedOn()).isNull();
-        assertThat(whisper1.getUserId().getActive()).isNull();
+        assertThat(whisper1.getUser().getUsername()).isEqualTo(whisper.getUser().getUsername());
+        assertThat(whisper1.getUser().getEmail()).isEqualTo(whisper.getUser().getEmail());
+        assertThat(whisper1.getUser().getDeleteUuid()).isNull();
+        assertThat(whisper1.getUser().getCreatedOn()).isNull();
+        assertThat(whisper1.getUser().getActive()).isNull();
     }
 }

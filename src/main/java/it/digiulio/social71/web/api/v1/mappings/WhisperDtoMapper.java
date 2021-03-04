@@ -32,7 +32,7 @@ public class WhisperDtoMapper implements ModelMapperConfigurer {
                         mapper -> {
                             mapper.skip(Whisper::setActive);
                             mapper.using(userDTOUserConverter)
-                                    .map(WhisperDTO::getUserId, Whisper::setUserId);
+                                    .map(WhisperDTO::getUser, Whisper::setUser);
                         }
                 );
 
@@ -42,7 +42,7 @@ public class WhisperDtoMapper implements ModelMapperConfigurer {
                         mapper -> {
                             mapper
                                     .using(userResolver)
-                                    .map(Whisper::getUserId, WhisperDTO::setUserId);
+                                    .map(Whisper::getUser, WhisperDTO::setUser);
                         }
                 );
     }

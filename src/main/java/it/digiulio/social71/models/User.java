@@ -1,11 +1,9 @@
 package it.digiulio.social71.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor

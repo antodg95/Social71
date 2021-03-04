@@ -20,5 +20,5 @@ public class WhisperDTO {
     private Timestamp createdOn;
 
     @NonNull
-    private UserDTO userId;
+    private UserDTO user;
 }

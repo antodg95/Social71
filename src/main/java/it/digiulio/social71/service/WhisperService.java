@@ -31,10 +31,10 @@ public class WhisperService implements ICrudService<Whisper>{
             log.debug("whisper in input is constraint ok");
         }
 
-        Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(whisper.getUserId().getId());
+        Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(whisper.getUser().getId());
 
         if (optionalUser.isEmpty()) {
-            throw new BadServiceRequestException("User", whisper.getUserId().getId().toString(), List.of("is not active"));
+            throw new BadServiceRequestException("User with id", whisper.getUser().getId().toString(), List.of("doesn't exists"));
         }
 
         whisper.setCreatedOn(Timestamp.from(Instant.now()));
@@ -60,10 +60,10 @@ public class WhisperService implements ICrudService<Whisper>{
             log.debug("whisper in input is constraint ok");
         }
 
-        Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(whisper.getUserId().getId());
+        Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(whisper.getUser().getId());
 
         if (optionalUser.isEmpty()) {
-            throw new BadServiceRequestException("User", whisper.getUserId().getId().toString(), List.of("doesn't exist"));
+            throw new BadServiceRequestException("User", whisper.getUser().getId().toString(), List.of("doesn't exist"));
         }
 
         return whisperRepository.save(whisper);
@@ -78,7 +78,9 @@ public class WhisperService implements ICrudService<Whisper>{
             throw new BadServiceRequestException("Id", id.toString(), List.of("doesn't exist"));
         }
 
-        whisperRepository.delete(optionalWhisper.get());
+        Whisper whisper = optionalWhisper.get();
+        whisper.setActive(false);
+        whisperRepository.save(whisper);
         return optionalWhisper.get();
     }
 
@@ -94,7 +96,7 @@ public class WhisperService implements ICrudService<Whisper>{
             throw new ValidationException("Text", whisper.getText(), List.of("must be not null or lenght greater than 0"));
         }
 
-        if (whisper.getUserId() == null) {
+        if (whisper.getUser() == null) {
             throw new ValidationException("User", null, List.of("must be not null"));
         }
 
