@@ -1,0 +1,21 @@
+INSERT INTO users (username, password, email, created_on, active) values ('antodg', 'passwd', 'antodg95@gmail.com', CURRENT_TIMESTAMP, '1');
+INSERT INTO users (username, password, email, created_on, active) values ('qwerty', 'passwd', 'qwerty@gmail.com', CURRENT_TIMESTAMP, '1');
+INSERT INTO users (username, password, email, created_on, active) values ('asdfg', 'passwd', 'asdfg@gmail.com', CURRENT_TIMESTAMP, '1');
+INSERT INTO users (username, password, email, created_on, active) values ('zxcvb', 'passwd', 'zxcvb@gmail.com', CURRENT_TIMESTAMP, '1');
+INSERT INTO users (username, password, email, created_on, active) values ('poiuy', 'passwd', 'poiuy@gmail.com', CURRENT_TIMESTAMP, '1');
+INSERT INTO users (username, password, email, created_on, active) values ('lkjhg', 'passwd', 'lkjhg@gmail.com', CURRENT_TIMESTAMP, '1');
+
+INSERT INTO whispers(user_id, text, created_on, active) values (1, 'whisper 1', CURRENT_TIMESTAMP, '1');
+INSERT INTO whispers(user_id, text, created_on, active) values (2, 'whisper 2', CURRENT_TIMESTAMP, '1');
+INSERT INTO whispers(user_id, text, created_on, active) values (3, 'whisper 3', CURRENT_TIMESTAMP, '1');
+INSERT INTO whispers(user_id, text, created_on, active) values (4, 'whisper 4', CURRENT_TIMESTAMP, '1');
+INSERT INTO whispers(user_id, text, created_on, active) values (5, 'whisper 5', CURRENT_TIMESTAMP, '1');
+INSERT INTO whispers(user_id, text, created_on, active) values (6, 'whisper 6', CURRENT_TIMESTAMP, '1');
+INSERT INTO whispers(user_id, text, created_on, active) values (1, 'whisper 7', CURRENT_TIMESTAMP, '1');
+INSERT INTO whispers(user_id, text, created_on, active) values (2, 'whisper 8', CURRENT_TIMESTAMP, '1');
+INSERT INTO whispers(user_id, text, created_on, active) values (3, 'whisper 9', CURRENT_TIMESTAMP, '1');
+INSERT INTO whispers(user_id, text, created_on, active) values (4, 'whisper 10', CURRENT_TIMESTAMP, '1');
+INSERT INTO whispers(user_id, text, created_on, active) values (5, 'whisper 11', CURRENT_TIMESTAMP, '1');
+INSERT INTO whispers(user_id, text, created_on, active) values (6, 'whisper 12', CURRENT_TIMESTAMP, '1');
+INSERT INTO whispers(user_id, text, created_on, active) values (1, 'whisper 13', CURRENT_TIMESTAMP, '1');
+INSERT INTO whispers(user_id, text, created_on, active) values (2, 'whisper 14', CURRENT_TIMESTAMP, '1');

@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: social71
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: "jdbc:postgresql://localhost:5432/social71"
+    username: social71
+    password: social71
+    platform: postgres
+    hikari:
+      connection-test-query: "select 1"
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+
+logging:
+  level:
+    it:
+      digiulio:
+        social71: TRACE
+
+springdoc:
+  api-docs:
+    path: "/v1/api-docs"
