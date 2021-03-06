@@ -2,6 +2,7 @@ package it.digiulio.social71.service;
 
 import static org.assertj.core.api.Assertions.*;
 
+import it.digiulio.social71.TestUtils;
 import it.digiulio.social71.exception.BadServiceRequestException;
 import it.digiulio.social71.exception.ValidationException;
 import it.digiulio.social71.models.User;
@@ -33,21 +34,9 @@ public class UserServiceTest {
     @BeforeEach
     public void setUp() {
         this.userService = new UserService(userRepository);
-        this.userList = new ArrayList<>();
-        this.id=0L;
-
         int defaultListSize = 20;
-
-        for (int i = 0; i<defaultListSize; i++) {
-            User user = new User();
-            ++id;
-            user.setUsername("username-" + id);
-            user.setEmail("test-" + id + "@test.com");
-            user.setPassword("password-" + id);
-            user.setId(id);
-            user.setActive(true);
-            userList.add(user);
-        }
+        this.userList = TestUtils.createTestUsers(defaultListSize);
+        this.id= (long) defaultListSize - 1;
 
         Mockito.lenient().when(this.userRepository.save(Mockito.any(User.class)))
                 .thenAnswer( parameter -> {
