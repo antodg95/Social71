@@ -73,6 +73,19 @@ public class UserControllerTest {
         assertThat(ret.getUsername()).isEqualTo(userDto.getUsername());
     }
 
+    @Test
+    public void testCreateWithExistingUsername() {
+        UserDTO userDto = new UserDTO();
+        userDto.setUsername("username-3");
+        userDto.setEmail("test@test");
+        userDto.setPassword("password");
+
+        assertThatExceptionOfType(BadServiceRequestException.class)
+                .isThrownBy(() -> userController.create(userDto))
+                .withMessageContaining("Username")
+                .withMessageContaining("already exists");
+    }
+
 
 
 }
