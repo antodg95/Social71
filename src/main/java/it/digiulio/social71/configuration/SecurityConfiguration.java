@@ -34,16 +34,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/api/v1/**")
-                .hasRole("ADMIN")
-                .anyRequest()
-                .authenticated()
-                .and()
-                .formLogin()
-                .permitAll()
-                .and()
-                .logout()
-                .permitAll();
+                .antMatchers("/api/v1/**").hasAnyRole("ADMIN", "USER");
+
+        http.authorizeRequests()
+                .antMatchers("/swagger-ui*/**").hasRole("ADMIN");
+
+        http.authorizeRequests()
+                .anyRequest().authenticated()
+                .and().formLogin().permitAll()
+                .and().logout().permitAll();
+
         http.csrf().disable();
     }
 
