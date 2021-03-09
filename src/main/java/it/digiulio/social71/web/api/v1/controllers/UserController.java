@@ -15,6 +15,9 @@ import it.digiulio.social71.web.api.v1.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -57,6 +60,9 @@ public class UserController implements ICrudRestController<UserDTO>{
     public UserDTO findById(
             @Parameter(description = "User's Id that need to be fetched. Must be > 0", required = true) Long id
     ) throws BadServiceRequestException, NotFoundException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        log.debug(auth.getName());
+        log.debug(auth.getAuthorities().toString());
         log.debug("GET: api/v1/users/{id} - findById ");
         log.trace("id: {}", id);
         if (id < 0) {
