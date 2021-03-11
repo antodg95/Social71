@@ -1,5 +1,6 @@
 package it.digiulio.social71.service;
 
+import it.digiulio.social71.exception.AuthorizationException;
 import it.digiulio.social71.exception.BadServiceRequestException;
 import it.digiulio.social71.exception.ValidationException;
 
@@ -13,7 +14,7 @@ public interface ICrudService<T> {
 
     Optional<T> findById(Long id);
 
-    T update(T entity) throws ValidationException, BadServiceRequestException;
+    T update(T entity) throws ValidationException, BadServiceRequestException, AuthorizationException;
 
-    T delete(Long id) throws BadServiceRequestException;
+    T delete(Long id) throws BadServiceRequestException, AuthorizationException;
 }

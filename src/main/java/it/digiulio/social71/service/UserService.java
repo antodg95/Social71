@@ -57,7 +57,7 @@ public class UserService implements ICrudService<User>{
     }
 
     @Override
-    public User update(User user) throws ValidationException, BadServiceRequestException{
+    public User update(User user) throws ValidationException, BadServiceRequestException, AuthorizationException{
         log.debug("update()");
         log.trace("user: {}", user.toString());
 
@@ -168,7 +168,7 @@ public class UserService implements ICrudService<User>{
         return true;
     }
 
-    private boolean authorizationCheck(Long id) {
+    private boolean authorizationCheck(Long id) throws AuthorizationException{
         Optional<User> optionalLoggedUser = userRepository.findUserByUsernameAndActiveIsTrue(AuthenticationUtils.getCurrentLoggedUsername());
         if (optionalLoggedUser.isPresent()) {
             User loggedUser = optionalLoggedUser.get();
