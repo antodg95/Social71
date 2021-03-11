@@ -23,9 +23,7 @@ public class CustomUserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        log.debug(user.toString());
         Iterable<Authority> authorities = authorityRepository.findAllByUser(user);
-        log.debug(authorities.toString());
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
         authorities.forEach(authority -> authorityList.add(new SimpleGrantedAuthority(authority.getAuthority())));
         return authorityList;

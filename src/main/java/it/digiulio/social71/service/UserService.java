@@ -2,13 +2,16 @@ package it.digiulio.social71.service;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
+import it.digiulio.social71.exception.AuthorizationException;
 import it.digiulio.social71.exception.BadServiceRequestException;
 import it.digiulio.social71.exception.ValidationException;
 import it.digiulio.social71.models.User;
 import it.digiulio.social71.repository.UserRepository;
+import it.digiulio.social71.utils.AuthenticationUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -58,6 +61,10 @@ public class UserService implements ICrudService<User>{
         log.debug("update()");
         log.trace("user: {}", user.toString());
 
+        if (authorizationCheck(user.getId())){
+            log.debug("authorizationCheck OK!");
+        }
+
         Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(user.getId());
 
         if (optionalUser.isEmpty()) {
@@ -90,12 +97,15 @@ public class UserService implements ICrudService<User>{
     }
 
     @Override
-    public User delete(Long id) throws BadServiceRequestException{
+    public User delete(Long id) throws BadServiceRequestException, AuthorizationException {
         log.debug("delete()");
         log.trace("user id: {}", id.toString());
 
-        Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(id);
+        if (authorizationCheck(id)){
+            log.debug("authorizationCheck OK!");
+        }
 
+        Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(id);
         if (optionalUser.isEmpty()) {
             throw new BadServiceRequestException("Id", id.toString(), List.of("doesn't exist"));
         }
@@ -155,6 +165,17 @@ public class UserService implements ICrudService<User>{
             throw new BadServiceRequestException("Email", user.getEmail(), List.of("already exists"));
         }
 
+        return true;
+    }
+
+    private boolean authorizationCheck(Long id) {
+        Optional<User> optionalLoggedUser = userRepository.findUserByUsernameAndActiveIsTrue(AuthenticationUtils.getCurrentLoggedUsername());
+        if (optionalLoggedUser.isPresent()) {
+            User loggedUser = optionalLoggedUser.get();
+            if (!loggedUser.getId().equals(id) && !AuthenticationUtils.getCurrentUserAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+                throw new AuthorizationException();
+            }
+        }
         return true;
     }
 }
