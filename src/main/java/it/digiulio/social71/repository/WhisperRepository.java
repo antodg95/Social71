@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface WhisperRepository extends CrudRepository<Whisper, Long> {
-    List<Whisper> findAllByUser(User user);
+    List<Whisper> findAllByUserAndActiveIsTrue(User user);
 }

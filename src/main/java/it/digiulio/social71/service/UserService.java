@@ -36,10 +36,10 @@ public class UserService implements ICrudService<User>{
         log.trace("user: {}", user.toString());
 
         if (checkUserValidationConstraint(user, true)) {
-            log.debug("user in input is constraint ok");
+            log.trace("user in input is constraint ok");
         }
         if (checkUserBadServiceRequest(user)) {
-            log.debug("User in input is valid for request");
+            log.trace("User in input is valid for request");
         }
 
         //TODO: Check per la password. Vedere come gestirla correttamente.
@@ -75,7 +75,7 @@ public class UserService implements ICrudService<User>{
         log.trace("user: {}", user.toString());
 
         if (authorizationCheck(user.getId())){
-            log.debug("authorizationCheck OK!");
+            log.trace("authorizationCheck OK!");
         }
 
         Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(user.getId());
@@ -115,7 +115,7 @@ public class UserService implements ICrudService<User>{
         log.trace("user id: {}", id.toString());
 
         if (authorizationCheck(id)){
-            log.debug("authorizationCheck OK!");
+            log.trace("authorizationCheck OK!");
         }
 
         Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(id);
