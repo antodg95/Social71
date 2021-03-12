@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -36,7 +37,9 @@ public class UserServiceTest {
 
     @BeforeEach
     public void setUp() {
-        this.userService = new UserService(userRepository);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
+
+        this.userService = new UserService(userRepository, encoder);
         int defaultListSize = 20;
         this.userList = TestUtils.createTestUsers(defaultListSize);
         this.id= (long) defaultListSize - 1;

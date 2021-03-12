@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -24,6 +25,7 @@ import java.util.*;
 public class UserService implements ICrudService<User>{
 
     private final UserRepository userRepository;
+    private final PasswordEncoder encoder;
 
     @Override
     public User create(User user) throws ValidationException, BadServiceRequestException{
@@ -38,6 +40,7 @@ public class UserService implements ICrudService<User>{
         }
 
         //TODO: Check per la password. Vedere come gestirla correttamente.
+        user.setPassword(encoder.encode(user.getPassword()));
 
         user.setCreatedOn(Timestamp.from(Instant.now()));
         user.setActive(true);

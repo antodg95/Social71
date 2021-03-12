@@ -28,7 +28,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .dataSource(dataSource)
                 .usersByUsernameQuery("SELECT username, password, active FROM users WHERE username = ?")
                 .authoritiesByUsernameQuery("SELECT username, authority FROM users, authorities WHERE users.username = ?")
-                .passwordEncoder(new BCryptPasswordEncoder(10));
+                .passwordEncoder(encoder());
     }
 
     @Override
@@ -50,5 +50,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/resources/**");
+    }
+
+    @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder(10);
     }
 }
