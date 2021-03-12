@@ -15,6 +15,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -41,9 +44,14 @@ public class UserServiceTest {
         Mockito.lenient().when(this.userRepository.save(Mockito.any(User.class)))
                 .thenAnswer( parameter -> {
                     User user = parameter.getArgument(0);
-                    user.setId(++id);
-                    user.setCreatedOn(Timestamp.from(Instant.now()));
-                    user.setActive(true);
+                    if (user.getId() == null) {
+                        user.setId(++id);
+                        user.setCreatedOn(Timestamp.from(Instant.now()));
+                        user.setActive(true);
+                    } else {
+                        Optional<User> foundUser = userList.stream().filter(user1 -> user1.getId().equals(user.getId())).findFirst();
+                        foundUser.ifPresent(value -> userList.remove(value));
+                    }
                     this.userList.add(user);
                     return user;
                 } );
@@ -68,6 +76,17 @@ public class UserServiceTest {
                     Long id = parameter.getArgument(0);
                     return userList.stream().filter(user -> user.getId().equals(id)).findFirst();
                 });
+        Mockito.lenient().when(this.userRepository.findUserByIdAndActiveIsTrue(Mockito.anyLong()))
+                .thenAnswer( parameter -> {
+                    Long id = parameter.getArgument(0);
+                    return userList.stream().filter(user -> user.getId().equals(id) && user.getActive().equals(true)).findFirst();
+                });
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.lenient().when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
     }
 
     @Test
@@ -173,5 +192,26 @@ public class UserServiceTest {
         Optional<User> optionalUser = userService.findById(91L);
 
         assertThat(optionalUser).isEmpty();
+    }
+
+    @Test
+    public void testUpdate() {
+        User user = userList.get(7);
+        user.setUsername("oehhhhh");
+        User userUpdated = userService.update(user);
+        assertThat(userUpdated.getUsername()).isEqualTo(user.getUsername());
+    }
+
+    @Test
+    public void testUpdateNonExistingUser() {
+        User user = new User();
+        user.setId(90L);
+        user.setPassword("pass");
+        user.setEmail("nonexisting@test.com");
+        user.setUsername("nonexisting-test");
+        assertThatExceptionOfType(BadServiceRequestException.class)
+                .isThrownBy( () -> userService.update(user))
+                .withMessageContaining("User")
+                .withMessageContaining("doesn't exist");
     }
 }

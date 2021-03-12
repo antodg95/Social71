@@ -68,7 +68,7 @@ public class UserService implements ICrudService<User>{
         Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(user.getId());
 
         if (optionalUser.isEmpty()) {
-            throw new BadServiceRequestException("User", user.getId().toString(), List.of("doesnt't exist"));
+            throw new BadServiceRequestException("User", user.getId().toString(), List.of("doesn't exist"));
         }
 
         User userFound = optionalUser.get();
