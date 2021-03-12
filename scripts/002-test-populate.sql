@@ -1,9 +1,9 @@
-INSERT INTO users (username, password, email, created_on, active) values ('antodg', '{bcrypt}$2a$10$dd5fTtND2.BANOek470.EOcyl03yjKbZCUWzwDpgbHdH31gY2wGIa', 'antodg95@gmail.com', CURRENT_TIMESTAMP, '1');
-INSERT INTO users (username, password, email, created_on, active) values ('qwerty', '{bcrypt}$2a$10$dd5fTtND2.BANOek470.EOcyl03yjKbZCUWzwDpgbHdH31gY2wGIa', 'qwerty@gmail.com', CURRENT_TIMESTAMP, '1');
-INSERT INTO users (username, password, email, created_on, active) values ('asdfg', '{bcrypt}$2a$10$dd5fTtND2.BANOek470.EOcyl03yjKbZCUWzwDpgbHdH31gY2wGIa', 'asdfg@gmail.com', CURRENT_TIMESTAMP, '1');
-INSERT INTO users (username, password, email, created_on, active) values ('zxcvb', '{bcrypt}$2a$10$dd5fTtND2.BANOek470.EOcyl03yjKbZCUWzwDpgbHdH31gY2wGIa', 'zxcvb@gmail.com', CURRENT_TIMESTAMP, '1');
-INSERT INTO users (username, password, email, created_on, active) values ('poiuy', '{bcrypt}$2a$10$dd5fTtND2.BANOek470.EOcyl03yjKbZCUWzwDpgbHdH31gY2wGIa', 'poiuy@gmail.com', CURRENT_TIMESTAMP, '1');
-INSERT INTO users (username, password, email, created_on, active) values ('lkjhg', '{bcrypt}$2a$10$dd5fTtND2.BANOek470.EOcyl03yjKbZCUWzwDpgbHdH31gY2wGIa', 'lkjhg@gmail.com', CURRENT_TIMESTAMP, '1');
+INSERT INTO users (username, password, email, created_on, active) values ('antodg', '$2a$10$dd5fTtND2.BANOek470.EOcyl03yjKbZCUWzwDpgbHdH31gY2wGIa', 'antodg95@gmail.com', CURRENT_TIMESTAMP, '1');
+INSERT INTO users (username, password, email, created_on, active) values ('qwerty', '$2a$10$dd5fTtND2.BANOek470.EOcyl03yjKbZCUWzwDpgbHdH31gY2wGIa', 'qwerty@gmail.com', CURRENT_TIMESTAMP, '1');
+INSERT INTO users (username, password, email, created_on, active) values ('asdfg', '$2a$10$dd5fTtND2.BANOek470.EOcyl03yjKbZCUWzwDpgbHdH31gY2wGIa', 'asdfg@gmail.com', CURRENT_TIMESTAMP, '1');
+INSERT INTO users (username, password, email, created_on, active) values ('zxcvb', '$2a$10$dd5fTtND2.BANOek470.EOcyl03yjKbZCUWzwDpgbHdH31gY2wGIa', 'zxcvb@gmail.com', CURRENT_TIMESTAMP, '1');
+INSERT INTO users (username, password, email, created_on, active) values ('poiuy', '$2a$10$dd5fTtND2.BANOek470.EOcyl03yjKbZCUWzwDpgbHdH31gY2wGIa', 'poiuy@gmail.com', CURRENT_TIMESTAMP, '1');
+INSERT INTO users (username, password, email, created_on, active) values ('lkjhg', '$2a$10$dd5fTtND2.BANOek470.EOcyl03yjKbZCUWzwDpgbHdH31gY2wGIa', 'lkjhg@gmail.com', CURRENT_TIMESTAMP, '1');
 
 INSERT INTO whispers(user_id, text, created_on, active) values (1, 'whisper 1', CURRENT_TIMESTAMP, '1');
 INSERT INTO whispers(user_id, text, created_on, active) values (2, 'whisper 2', CURRENT_TIMESTAMP, '1');
