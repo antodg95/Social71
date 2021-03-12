@@ -4,8 +4,8 @@ import it.digiulio.social71.models.User;
 import it.digiulio.social71.models.Whisper;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.Set;
+import java.util.List;
 
 public interface WhisperRepository extends CrudRepository<Whisper, Long> {
-    Set<Whisper> findAllByUserId(User userId);
+    List<Whisper> findAllByUser(User user);
 }

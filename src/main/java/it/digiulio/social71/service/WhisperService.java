@@ -84,6 +84,14 @@ public class WhisperService implements ICrudService<Whisper>{
         return optionalWhisper.get();
     }
 
+    public List<Whisper> findAllByUserId(Long userId) {
+        Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(userId);
+        if (optionalUser.isEmpty()) {
+            throw new BadServiceRequestException("User", userId.toString(), List.of("doesn't exist"));
+        }
+
+        return whisperRepository.findAllByUser(optionalUser.get());
+    }
 
     private boolean checkWhisperValidationConstraint(Whisper whisper, boolean id) throws ValidationException{
         if (id) {
