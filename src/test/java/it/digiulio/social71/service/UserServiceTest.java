@@ -6,6 +6,7 @@ import it.digiulio.social71.TestUtils;
 import it.digiulio.social71.exception.BadServiceRequestException;
 import it.digiulio.social71.exception.ValidationException;
 import it.digiulio.social71.models.User;
+import it.digiulio.social71.repository.AuthorityRepository;
 import it.digiulio.social71.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +40,7 @@ public class UserServiceTest {
     public void setUp() {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
 
-        this.userService = new UserService(userRepository, encoder);
+        this.userService = new UserService(userRepository, Mockito.mock(AuthorityRepository.class), encoder);
         int defaultListSize = 20;
         this.userList = TestUtils.createTestUsers(defaultListSize);
         this.id= (long) defaultListSize - 1;

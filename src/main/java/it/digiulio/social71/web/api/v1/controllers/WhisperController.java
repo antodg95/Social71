@@ -125,7 +125,7 @@ public class WhisperController implements ICrudRestController<WhisperDTO>{
     }
 
     @GetMapping("/user/{userId}")
-    @Operation(summary = "Get all Whispers for a given user id", tags = {"Whispers"}, responses = {
+    @Operation(summary = "Get all Whispers for a given user id", tags = {"Whisper"}, responses = {
             @ApiResponse(responseCode = "200", description = "List of all user's id Whispers", content = @Content(mediaType = "application/json",
                     schema = @Schema(allOf = WhisperDTO.class))),
             @ApiResponse(responseCode = "400", description = "Bad Service Request Exception: User doesn't exist or userId < 0")

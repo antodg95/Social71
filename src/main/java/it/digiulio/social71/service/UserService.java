@@ -5,7 +5,9 @@ import com.google.common.collect.Sets;
 import it.digiulio.social71.exception.AuthorizationException;
 import it.digiulio.social71.exception.BadServiceRequestException;
 import it.digiulio.social71.exception.ValidationException;
+import it.digiulio.social71.models.Authority;
 import it.digiulio.social71.models.User;
+import it.digiulio.social71.repository.AuthorityRepository;
 import it.digiulio.social71.repository.UserRepository;
 import it.digiulio.social71.utils.AuthenticationUtils;
 import lombok.AllArgsConstructor;
@@ -25,6 +27,7 @@ import java.util.*;
 public class UserService implements ICrudService<User>{
 
     private final UserRepository userRepository;
+    private final AuthorityRepository authorityRepository;
     private final PasswordEncoder encoder;
 
     @Override
@@ -45,7 +48,14 @@ public class UserService implements ICrudService<User>{
         user.setCreatedOn(Timestamp.from(Instant.now()));
         user.setActive(true);
 
-        return userRepository.save(user);
+        user = userRepository.save(user);
+
+        Authority authority = new Authority();
+        authority.setAuthority("ROLE_USER");
+        authority.setUser(user);
+        authorityRepository.save(authority);
+
+        return user;
     }
 
     @Override
