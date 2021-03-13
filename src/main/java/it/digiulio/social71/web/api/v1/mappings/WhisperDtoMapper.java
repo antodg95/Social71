@@ -13,36 +13,12 @@ import org.springframework.stereotype.Component;
 public class WhisperDtoMapper implements ModelMapperConfigurer {
     @Override
     public void configure(ModelMapper modelMapper) {
-
-        Converter<User, UserDTO> userResolver =
-                context -> {
-                    User user = context.getSource();
-                    return modelMapper.map(user, UserDTO.class);
-                };
-
-        Converter<UserDTO, User> userDTOUserConverter =
-                context -> {
-                    UserDTO userDTO = context.getSource();
-                    return modelMapper.map(userDTO, User.class);
-                };
-
         modelMapper
                 .typeMap(WhisperDTO.class, Whisper.class)
                 .addMappings(
                         mapper -> {
                             mapper.skip(Whisper::setActive);
-                            mapper.using(userDTOUserConverter)
-                                    .map(WhisperDTO::getUser, Whisper::setUser);
-                        }
-                );
-
-        modelMapper
-                .typeMap(Whisper.class, WhisperDTO.class)
-                .addMappings(
-                        mapper -> {
-                            mapper
-                                    .using(userResolver)
-                                    .map(Whisper::getUser, WhisperDTO::setUser);
+                            mapper.skip(Whisper::setUser);
                         }
                 );
     }

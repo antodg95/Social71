@@ -34,12 +34,9 @@ public class WhisperService implements ICrudService<Whisper>{
             log.trace("whisper in input is constraint ok");
         }
 
-        Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(whisper.getUser().getId());
+        Optional<User> optionalUser = userRepository.findUserByUsernameAndActiveIsTrue(AuthenticationUtils.getCurrentLoggedUsername());
 
-        if (optionalUser.isEmpty()) {
-            throw new BadServiceRequestException("User with id", whisper.getUser().getId().toString(), List.of("doesn't exists"));
-        }
-
+        optionalUser.ifPresent(whisper::setUser);
         whisper.setCreatedOn(Timestamp.from(Instant.now()));
         whisper.setActive(true);
 
@@ -60,32 +57,23 @@ public class WhisperService implements ICrudService<Whisper>{
     @Override
     public Whisper update(Whisper whisper) throws BadServiceRequestException, AuthorizationException {
 
-        Optional<Whisper> optionalWhisper = whisperRepository.findById(whisper.getId());
+        Optional<Whisper> optionalWhisper = whisperRepository.findWhisperByIdAndActiveIsTrue(whisper.getId());
         if (optionalWhisper.isEmpty()) {
             throw new BadServiceRequestException("Whisper", whisper.getId().toString(), List.of("doesn't exist"));
         }
 
         Whisper whisperFound = optionalWhisper.get();
 
-        if (!whisperFound.getUser().getId().equals(whisper.getUser().getId())) {
-            throw new BadServiceRequestException("User.id", whisper.getUser().getId().toString(), List.of("doesn't match Whisper's owner"));
-        }
-
         Optional<User> optionalLoggedUser = userRepository.findUserByUsernameAndActiveIsTrue(AuthenticationUtils.getCurrentLoggedUsername());
         if (optionalLoggedUser.isPresent()) {
             User loggedUser = optionalLoggedUser.get();
-            if (!loggedUser.getId().equals(whisper.getUser().getId())) {
+            if (!loggedUser.getId().equals(whisperFound.getUser().getId())) {
                 throw new AuthorizationException();
             }
         }
 
         if (checkWhisperValidationConstraint(whisper, false)) {
             log.trace("whisper in input is constraint ok");
-        }
-
-        Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(whisperFound.getUser().getId());
-        if (optionalUser.isEmpty()) {
-            throw new BadServiceRequestException("User", whisperFound.getUser().getId().toString(), List.of("doesn't exist"));
         }
 
         whisperFound.setText(whisper.getText());
@@ -131,10 +119,6 @@ public class WhisperService implements ICrudService<Whisper>{
 
         if (whisper.getText() == null || whisper.getText().length() == 0) {
             throw new ValidationException("Text", whisper.getText(), List.of("must be not null or lenght greater than 0"));
-        }
-
-        if (whisper.getUser() == null) {
-            throw new ValidationException("User", null, List.of("must be not null"));
         }
 
         if (whisper.getCreatedOn() != null) {
