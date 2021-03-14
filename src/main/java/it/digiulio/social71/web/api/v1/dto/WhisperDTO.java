@@ -20,7 +20,4 @@ public class WhisperDTO {
     private String text;
 
     private Timestamp createdOn;
-
-    @NonNull
-    private UserDTO user;
 }

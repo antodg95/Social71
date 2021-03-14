@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import it.digiulio.social71.exception.AuthorizationException;
 import it.digiulio.social71.exception.BadServiceRequestException;
 import it.digiulio.social71.exception.NotFoundException;
 import it.digiulio.social71.exception.ValidationException;
@@ -32,7 +33,8 @@ public class UserController implements ICrudRestController<UserDTO>{
 
     @Override
     @Operation(summary = "Create User", tags = {"User"}, responses = {
-            @ApiResponse(responseCode = "200", description = "The User", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "200", description = "The User", content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = UserDTO.class))),
             @ApiResponse(responseCode = "400", description = "Bad Service Request Exception or Validation Exception")
     })
     public UserDTO create(
@@ -50,7 +52,8 @@ public class UserController implements ICrudRestController<UserDTO>{
 
     @Override
     @Operation(summary = "Find User by ID", tags = {"User"}, responses = {
-            @ApiResponse(responseCode = "200", description = "The User", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "200", description = "The User", content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = UserDTO.class))),
             @ApiResponse(responseCode = "400", description = "Bad Service Request, id must be greater than 0"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
@@ -74,13 +77,15 @@ public class UserController implements ICrudRestController<UserDTO>{
 
     @Override
     @Operation(summary = "Update User", tags = {"User"}, responses = {
-            @ApiResponse(responseCode = "200", description = "The User", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "200", description = "The User", content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = UserDTO.class))),
             @ApiResponse(responseCode = "400", description = "Bad Service Request Exception or Validation Exception."),
+            @ApiResponse(responseCode = "403", description = "AuthorizationException"),
     })
     public UserDTO update(
             @Parameter(description = "User's Id that need to be updated. Must be > 0", required = true) Long id,
             @RequestBody(description = "User's fields that need to be updated", required = true) UserDTO userDTO
-    ) throws BadServiceRequestException, ValidationException {
+    ) throws BadServiceRequestException, ValidationException, AuthorizationException {
         log.debug("PUT: api/v1/users/{id} - update");
         log.trace("id: {}, user:{}", id, userDTO);
 
@@ -98,12 +103,14 @@ public class UserController implements ICrudRestController<UserDTO>{
 
     @Override
     @Operation(summary = "Delete User", tags = {"User"}, responses = {
-            @ApiResponse(responseCode = "200", description = "The User", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "200", description = "The User", content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = UserDTO.class))),
             @ApiResponse(responseCode = "400", description = "Bad Service Request Exception: User doesn't exist or Id < 0"),
+            @ApiResponse(responseCode = "403", description = "AuthorizationException"),
     })
     public UserDTO delete(
             @Parameter(description = "User's Id that need to be deleted. Must be > 0", required = true) Long id
-    ) throws BadServiceRequestException {
+    ) throws BadServiceRequestException, AuthorizationException {
         log.debug("DELETE: api/v1/users/{id} - delete");
         log.trace("id: {}", id);
 
