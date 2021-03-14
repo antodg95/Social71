@@ -22,7 +22,6 @@ Secured endpoints. An user with USER_ROLE can update or delete only his resource
 
 ## Getting started
 
----
 These instructions will get you through a running example.
 
 ### Prerequisites
