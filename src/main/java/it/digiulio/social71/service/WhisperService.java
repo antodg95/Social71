@@ -2,14 +2,17 @@ package it.digiulio.social71.service;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
+import it.digiulio.social71.exception.AuthorizationException;
 import it.digiulio.social71.exception.BadServiceRequestException;
 import it.digiulio.social71.exception.ValidationException;
 import it.digiulio.social71.models.User;
 import it.digiulio.social71.models.Whisper;
 import it.digiulio.social71.repository.UserRepository;
 import it.digiulio.social71.repository.WhisperRepository;
+import it.digiulio.social71.utils.AuthenticationUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -28,15 +31,12 @@ public class WhisperService implements ICrudService<Whisper>{
     public Whisper create(Whisper whisper) throws ValidationException {
 
         if (checkWhisperValidationConstraint(whisper, true)) {
-            log.debug("whisper in input is constraint ok");
+            log.trace("whisper in input is constraint ok");
         }
 
-        Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(whisper.getUser().getId());
+        Optional<User> optionalUser = userRepository.findUserByUsernameAndActiveIsTrue(AuthenticationUtils.getCurrentLoggedUsername());
 
-        if (optionalUser.isEmpty()) {
-            throw new BadServiceRequestException("User with id", whisper.getUser().getId().toString(), List.of("doesn't exists"));
-        }
-
+        optionalUser.ifPresent(whisper::setUser);
         whisper.setCreatedOn(Timestamp.from(Instant.now()));
         whisper.setActive(true);
 
@@ -55,35 +55,60 @@ public class WhisperService implements ICrudService<Whisper>{
     }
 
     @Override
-    public Whisper update(Whisper whisper) {
+    public Whisper update(Whisper whisper) throws BadServiceRequestException, AuthorizationException {
+
+        Optional<Whisper> optionalWhisper = whisperRepository.findWhisperByIdAndActiveIsTrue(whisper.getId());
+        if (optionalWhisper.isEmpty()) {
+            throw new BadServiceRequestException("Whisper", whisper.getId().toString(), List.of("doesn't exist"));
+        }
+
+        Whisper whisperFound = optionalWhisper.get();
+
+        Optional<User> optionalLoggedUser = userRepository.findUserByUsernameAndActiveIsTrue(AuthenticationUtils.getCurrentLoggedUsername());
+        if (optionalLoggedUser.isPresent()) {
+            User loggedUser = optionalLoggedUser.get();
+            if (!loggedUser.getId().equals(whisperFound.getUser().getId())) {
+                throw new AuthorizationException();
+            }
+        }
+
         if (checkWhisperValidationConstraint(whisper, false)) {
-            log.debug("whisper in input is constraint ok");
+            log.trace("whisper in input is constraint ok");
         }
 
-        Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(whisper.getUser().getId());
+        whisperFound.setText(whisper.getText());
 
-        if (optionalUser.isEmpty()) {
-            throw new BadServiceRequestException("User", whisper.getUser().getId().toString(), List.of("doesn't exist"));
-        }
-
-        return whisperRepository.save(whisper);
+        return whisperRepository.save(whisperFound);
 
     }
 
     @Override
-    public Whisper delete(Long id) {
-        Optional<Whisper> optionalWhisper = whisperRepository.findById(id);
+    public Whisper delete(Long id) throws BadServiceRequestException, AuthorizationException {
 
+        Optional<Whisper> optionalWhisper = whisperRepository.findById(id);
         if (optionalWhisper.isEmpty()) {
             throw new BadServiceRequestException("Id", id.toString(), List.of("doesn't exist"));
         }
 
         Whisper whisper = optionalWhisper.get();
+
+        if (authorizationCheck(whisper.getUser().getId())){
+            log.trace("authorizationCheck OK!");
+        }
+
         whisper.setActive(false);
         whisperRepository.save(whisper);
         return optionalWhisper.get();
     }
 
+    public List<Whisper> findAllByUserId(Long userId) {
+        Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(userId);
+        if (optionalUser.isEmpty()) {
+            throw new BadServiceRequestException("User", userId.toString(), List.of("doesn't exist"));
+        }
+
+        return whisperRepository.findAllByUserAndActiveIsTrue(optionalUser.get());
+    }
 
     private boolean checkWhisperValidationConstraint(Whisper whisper, boolean id) throws ValidationException{
         if (id) {
@@ -96,10 +121,21 @@ public class WhisperService implements ICrudService<Whisper>{
             throw new ValidationException("Text", whisper.getText(), List.of("must be not null or lenght greater than 0"));
         }
 
-        if (whisper.getUser() == null) {
-            throw new ValidationException("User", null, List.of("must be not null"));
+        if (whisper.getCreatedOn() != null) {
+            throw new ValidationException("CreatedOn", whisper.getCreatedOn().toString(), List.of("must be null"));
         }
 
+        return true;
+    }
+
+    private boolean authorizationCheck(Long id) throws AuthorizationException {
+        Optional<User> optionalLoggedUser = userRepository.findUserByUsernameAndActiveIsTrue(AuthenticationUtils.getCurrentLoggedUsername());
+        if (optionalLoggedUser.isPresent()) {
+            User loggedUser = optionalLoggedUser.get();
+            if (!loggedUser.getId().equals(id) && !AuthenticationUtils.getCurrentUserAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+                throw new AuthorizationException();
+            }
+        }
         return true;
     }
 }

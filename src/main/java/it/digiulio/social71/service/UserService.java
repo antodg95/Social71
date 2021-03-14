@@ -2,13 +2,19 @@ package it.digiulio.social71.service;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
+import it.digiulio.social71.exception.AuthorizationException;
 import it.digiulio.social71.exception.BadServiceRequestException;
 import it.digiulio.social71.exception.ValidationException;
+import it.digiulio.social71.models.Authority;
 import it.digiulio.social71.models.User;
+import it.digiulio.social71.repository.AuthorityRepository;
 import it.digiulio.social71.repository.UserRepository;
+import it.digiulio.social71.utils.AuthenticationUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -21,6 +27,8 @@ import java.util.*;
 public class UserService implements ICrudService<User>{
 
     private final UserRepository userRepository;
+    private final AuthorityRepository authorityRepository;
+    private final PasswordEncoder encoder;
 
     @Override
     public User create(User user) throws ValidationException, BadServiceRequestException{
@@ -28,18 +36,26 @@ public class UserService implements ICrudService<User>{
         log.trace("user: {}", user.toString());
 
         if (checkUserValidationConstraint(user, true)) {
-            log.debug("user in input is constraint ok");
+            log.trace("user in input is constraint ok");
         }
         if (checkUserBadServiceRequest(user)) {
-            log.debug("User in input is valid for request");
+            log.trace("User in input is valid for request");
         }
 
         //TODO: Check per la password. Vedere come gestirla correttamente.
+        user.setPassword(encoder.encode(user.getPassword()));
 
         user.setCreatedOn(Timestamp.from(Instant.now()));
         user.setActive(true);
 
-        return userRepository.save(user);
+        user = userRepository.save(user);
+
+        Authority authority = new Authority();
+        authority.setAuthority("ROLE_USER");
+        authority.setUser(user);
+        authorityRepository.save(authority);
+
+        return user;
     }
 
     @Override
@@ -54,14 +70,18 @@ public class UserService implements ICrudService<User>{
     }
 
     @Override
-    public User update(User user) throws ValidationException, BadServiceRequestException{
+    public User update(User user) throws ValidationException, BadServiceRequestException, AuthorizationException{
         log.debug("update()");
         log.trace("user: {}", user.toString());
+
+        if (authorizationCheck(user.getId())){
+            log.trace("authorizationCheck OK!");
+        }
 
         Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(user.getId());
 
         if (optionalUser.isEmpty()) {
-            throw new BadServiceRequestException("User", user.getId().toString(), List.of("doesnt't exist"));
+            throw new BadServiceRequestException("User", user.getId().toString(), List.of("doesn't exist"));
         }
 
         User userFound = optionalUser.get();
@@ -90,12 +110,15 @@ public class UserService implements ICrudService<User>{
     }
 
     @Override
-    public User delete(Long id) throws BadServiceRequestException{
+    public User delete(Long id) throws BadServiceRequestException, AuthorizationException {
         log.debug("delete()");
         log.trace("user id: {}", id.toString());
 
-        Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(id);
+        if (authorizationCheck(id)){
+            log.trace("authorizationCheck OK!");
+        }
 
+        Optional<User> optionalUser = userRepository.findUserByIdAndActiveIsTrue(id);
         if (optionalUser.isEmpty()) {
             throw new BadServiceRequestException("Id", id.toString(), List.of("doesn't exist"));
         }
@@ -155,6 +178,17 @@ public class UserService implements ICrudService<User>{
             throw new BadServiceRequestException("Email", user.getEmail(), List.of("already exists"));
         }
 
+        return true;
+    }
+
+    private boolean authorizationCheck(Long id) throws AuthorizationException{
+        Optional<User> optionalLoggedUser = userRepository.findUserByUsernameAndActiveIsTrue(AuthenticationUtils.getCurrentLoggedUsername());
+        if (optionalLoggedUser.isPresent()) {
+            User loggedUser = optionalLoggedUser.get();
+            if (!loggedUser.getId().equals(id) && !AuthenticationUtils.getCurrentUserAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+                throw new AuthorizationException();
+            }
+        }
         return true;
     }
 }
