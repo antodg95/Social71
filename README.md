@@ -1,11 +1,9 @@
 # social71
----
 This is a Social Network clone developed with Java Spring Boot. 
 
 >The following samples are intended for use in local development environments
 
 ##Versions summary
----
 ### 0.0.1
 Project structure.  
 Postgres DB setup with docker-compose and sql scripts  
