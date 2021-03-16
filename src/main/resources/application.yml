@@ -6,7 +6,7 @@ spring:
     name: social71
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: "jdbc:postgresql://localhost:5432/social71"
+    url: "jdbc:postgresql://social71.cre7ho3uz9p0.eu-west-3.rds.amazonaws.com:5432/social71"
     username: social71
     password: social71
     platform: postgres
@@ -27,3 +27,15 @@ logging:
 springdoc:
   api-docs:
     path: "/v1/api-docs"
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: localhost
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/social71"
+    username: social71
+    password: social71
+    platform: postgres
