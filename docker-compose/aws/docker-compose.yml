@@ -1,0 +1,13 @@
+version: '3.6'
+
+networks:
+  default:
+
+services:
+  social71:
+    image: antodg95/social71:0.0.3
+    container_name: social71
+    ports:
+      - "8080:8080"
+    environment:
+      JAVA_OPTS: "-Xss512k"

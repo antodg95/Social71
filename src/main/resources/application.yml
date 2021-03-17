@@ -35,7 +35,7 @@ spring:
     activate:
       on-profile: localhost
   datasource:
-    url: "jdbc:postgresql://localhost:5432/social71"
+    url: "jdbc:postgresql://postgres-social71:5432/social71"
     username: social71
     password: social71
     platform: postgres
