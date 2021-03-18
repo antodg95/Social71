@@ -177,7 +177,7 @@ public class UserServiceTest {
 
     @Test
     public void testFindAll() {
-        Set<User> users = userService.findAll();
+        List<User> users = userService.findAll();
 
         assertThat(users.size()).isEqualTo(userList.size());
     }

@@ -1,7 +1,7 @@
 package it.digiulio.social71.service;
 
 import com.google.common.collect.Iterators;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import it.digiulio.social71.exception.AuthorizationException;
 import it.digiulio.social71.exception.BadServiceRequestException;
 import it.digiulio.social71.exception.ValidationException;
@@ -44,9 +44,9 @@ public class WhisperService implements ICrudService<Whisper>{
     }
 
     @Override
-    public Set<Whisper> findAll() {
+    public List<Whisper> findAll() {
         Iterator<Whisper> userIterator = whisperRepository.findAll().iterator();
-        return Sets.newHashSet(Iterators.filter(userIterator, Whisper.class));
+        return Lists.newArrayList(Iterators.filter(userIterator, Whisper.class));
     }
 
     @Override

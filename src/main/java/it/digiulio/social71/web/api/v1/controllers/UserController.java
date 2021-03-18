@@ -17,11 +17,13 @@ import it.digiulio.social71.web.api.v1.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -127,5 +129,21 @@ public class UserController implements ICrudRestController<UserDTO>{
 
         log.trace("deleted user: {}", user);
         return this.modelMapper.map(user, UserDTO.class);
+    }
+
+    @GetMapping
+    @Operation(summary = "List all Users", tags = {"User"}, responses = {
+            @ApiResponse(responseCode = "200", description = "List of all Users", content = @Content(mediaType = "application/json",
+                    schema = @Schema(allOf = UserDTO.class)))
+    })
+    @Timed(value = "user.findAll", description = "Time spent listing all users", percentiles = {0.50, 0.75, 0.95, 0.98, 0.99, 0.999})
+    public List<UserDTO> findAll() {
+        log.debug("GET: api/v1/users - findAll");
+
+        List<User> userList = this.userService.findAll();
+        return userList
+                .stream()
+                .map(user -> this.modelMapper.map(user, UserDTO.class))
+                .collect(Collectors.toList());
     }
 }
