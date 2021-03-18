@@ -50,6 +50,7 @@ services:
     volumes:
       - "./grafana-datasource.yml:/etc/grafana/provisioning/datasources/grafana-datasource.yml"
       - "./grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/grafana-dashboard.yml"
-      - "./dashboard-userwhisperendpoints.json:/etc/grafana/dashboards/ssln-booking-statistics.json"
+      - "./dashboard-userwhisperendpoints.json:/etc/grafana/dashboards/userwhisperendpoints.json"
+      - "./dashboard-basicstats.json:/etc/grafana/dashboards/basicstats.json"
     environment:
       GF_SECURITY_ADMIN_PASSWORD: "social71"
