@@ -6,31 +6,13 @@ networks:
       name: social-71
 
 services:
-  postgres:
-    image: postgres:latest
-    container_name: social71-postgres
-    hostname: postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - "./sql-scripts/001-create.sql:/docker-entrypoint-initdb.d/001-create.sql"
-      - "./sql-scripts/002-test-populate.sql:/docker-entrypoint-initdb.d/002-test-populate.sql"
-      - "./sql-scripts/003-create.sql:/docker-entrypoint-initdb.d/003-create.sql"
-      - "./sql-scripts/004-test-populate.sql:/docker-entrypoint-initdb.d/004-test-populate.sql"
-    environment:
-      POSTGRES_DB: social71
-      POSTGRES_USER: social71
-      POSTGRES_PASSWORD: social71
-
   social71:
-    image: social71:0.0.4
+    image: antodg95/social71:0.0.4
     container_name: social71
-    depends_on:
-      - postgres
     ports:
       - "8080:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: "localhost"
+      JAVA_OPTS: "-Xss256k -Xmx128m -XX:ReservedCodeCacheSize=60M"
 
   prometheus:
     image: prom/prometheus:latest
