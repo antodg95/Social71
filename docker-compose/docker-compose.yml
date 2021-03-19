@@ -38,7 +38,7 @@ services:
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
     volumes:
-      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
 
   grafana:
     image: grafana/grafana:latest
@@ -48,9 +48,11 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - "./grafana-datasource.yml:/etc/grafana/provisioning/datasources/grafana-datasource.yml"
-      - "./grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/grafana-dashboard.yml"
-      - "./dashboard-userwhisperendpoints.json:/etc/grafana/dashboards/userwhisperendpoints.json"
-      - "./dashboard-basicstats.json:/etc/grafana/dashboards/basicstats.json"
+      - "./grafana/grafana-datasource.yml:/etc/grafana/provisioning/datasources/grafana-datasource.yml"
+      - "./grafana/grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/grafana-dashboard.yml"
+      - "./grafana/grafana-notifier-log-channel.yml:/etc/grafana/provisioning/notifiers/grafana-notifier.yml"
+      - "./grafana/dashboard-userwhisperendpoints.json:/etc/grafana/dashboards/userwhisperendpoints.json"
+      - "./grafana/dashboard-basicstats.json:/etc/grafana/dashboards/basicstats.json"
+      - "./grafana/dashboard-alert.json:/etc/grafana/dashboards/alert.json"
     environment:
       GF_SECURITY_ADMIN_PASSWORD: "social71"
