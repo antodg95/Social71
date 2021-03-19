@@ -23,7 +23,7 @@ services:
       POSTGRES_PASSWORD: social71
 
   social71:
-    image: social71:0.0.4
+    image: antodg95/social71:0.0.4
     container_name: social71
     depends_on:
       - postgres
