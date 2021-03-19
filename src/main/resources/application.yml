@@ -18,6 +18,15 @@ spring:
     hibernate:
       ddl-auto: validate
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+
 logging:
   level:
     it:
@@ -35,7 +44,7 @@ spring:
     activate:
       on-profile: localhost
   datasource:
-    url: "jdbc:postgresql://postgres-social71:5432/social71"
+    url: "jdbc:postgresql://social71-postgres:5432/social71"
     username: social71
     password: social71
     platform: postgres

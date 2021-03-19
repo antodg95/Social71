@@ -1,5 +1,6 @@
 package it.digiulio.social71.web.api.v1.controllers;
 
+import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -39,6 +40,7 @@ public class WhisperController implements ICrudRestController<WhisperDTO>{
                     schema = @Schema(implementation = WhisperDTO.class))),
             @ApiResponse(responseCode = "400", description = "Bad Service Request Exception or Validation Exception")
     })
+    @Timed(value = "whisper.create", description = "Time spent creating whispers", percentiles = {0.50, 0.75, 0.95, 0.98, 0.99, 0.999})
     public WhisperDTO create(
             @RequestBody(description = "Whisper that needs to be created", required = true) WhisperDTO whisperDTO
     ) throws ValidationException, BadServiceRequestException {
@@ -59,6 +61,7 @@ public class WhisperController implements ICrudRestController<WhisperDTO>{
             @ApiResponse(responseCode = "400", description = "Bad Service Request, id must be greater than 0"),
             @ApiResponse(responseCode = "404", description = "Whisper not found")
     })
+    @Timed(value = "whisper.findById", description = "Time spent finding whispers by id", percentiles = {0.50, 0.75, 0.95, 0.98, 0.99, 0.999})
     public WhisperDTO findById(
             @Parameter(description = "Whisper's Id that need to be fetched. Must be > 0", required = true) Long id
     ) throws ValidationException {
@@ -83,6 +86,7 @@ public class WhisperController implements ICrudRestController<WhisperDTO>{
                     schema = @Schema(implementation = WhisperDTO.class))),
             @ApiResponse(responseCode = "400", description = "Bad Service Request Exception or Validation Exception."),
     })
+    @Timed(value = "whisper.update", description = "Time spent updating whispers", percentiles = {0.50, 0.75, 0.95, 0.98, 0.99, 0.999})
     public WhisperDTO update(
             @Parameter(description = "Whisper's Id that need to be updated. Must be > 0", required = true) Long id,
             @RequestBody(description = "Whisper's fields that need to be updated", required = true) WhisperDTO whisperDTO
@@ -108,6 +112,7 @@ public class WhisperController implements ICrudRestController<WhisperDTO>{
                     schema = @Schema(implementation = WhisperDTO.class))),
             @ApiResponse(responseCode = "400", description = "Bad Service Request Exception: Whisper doesn't exist or Id < 0"),
     })
+    @Timed(value = "whisper.delete", description = "Time spent deleting whispers", percentiles = {0.50, 0.75, 0.95, 0.98, 0.99, 0.999})
     public WhisperDTO delete(
             @Parameter(description = "Whisper's Id that need to be deleted. Must be > 0", required = true) Long id
     ) throws BadServiceRequestException {
@@ -130,6 +135,7 @@ public class WhisperController implements ICrudRestController<WhisperDTO>{
                     schema = @Schema(allOf = WhisperDTO.class))),
             @ApiResponse(responseCode = "400", description = "Bad Service Request Exception: User doesn't exist or userId < 0")
     })
+    @Timed(value = "whisper.findAllByUserId", description = "Time spent finding whispers by user id", percentiles = {0.50, 0.75, 0.95, 0.98, 0.99, 0.999})
     public List<WhisperDTO> findAllByUserId(
             @Parameter(description = "User's Id to get his Whispers list", required = true) @PathVariable(name = "userId") Long userId
     ) throws BadServiceRequestException {

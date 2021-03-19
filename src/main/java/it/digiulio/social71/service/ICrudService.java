@@ -4,13 +4,13 @@ import it.digiulio.social71.exception.AuthorizationException;
 import it.digiulio.social71.exception.BadServiceRequestException;
 import it.digiulio.social71.exception.ValidationException;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface ICrudService<T> {
     T create(T entity) throws ValidationException, BadServiceRequestException;
 
-    Set<T> findAll();
+    List<T> findAll();
 
     Optional<T> findById(Long id);
 

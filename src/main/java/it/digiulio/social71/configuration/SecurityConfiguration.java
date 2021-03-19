@@ -42,6 +42,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger-ui*/**").hasRole("ADMIN");
 
         http.authorizeRequests()
+                .antMatchers("/actuator*/**").permitAll();
+
+        http.authorizeRequests()
                 .anyRequest().authenticated()
                 .and().formLogin().permitAll()
                 .and().logout().permitAll();
