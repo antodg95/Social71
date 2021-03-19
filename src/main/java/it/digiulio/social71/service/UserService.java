@@ -1,7 +1,7 @@
 package it.digiulio.social71.service;
 
 import com.google.common.collect.Iterators;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import it.digiulio.social71.exception.AuthorizationException;
 import it.digiulio.social71.exception.BadServiceRequestException;
 import it.digiulio.social71.exception.ValidationException;
@@ -59,9 +59,9 @@ public class UserService implements ICrudService<User>{
     }
 
     @Override
-    public Set<User> findAll() {
+    public List<User> findAll() {
         Iterator<User> userIterator = userRepository.findAll().iterator();
-        return Sets.newHashSet(Iterators.filter(userIterator, User.class));
+        return Lists.newArrayList(Iterators.filter(userIterator, User.class));
     }
 
     @Override

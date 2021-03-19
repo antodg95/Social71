@@ -2,11 +2,13 @@ version: '3.6'
 
 networks:
   default:
+    external:
+      name: social-71
 
 services:
   postgres:
     image: postgres:latest
-    container_name: postgres-social71
+    container_name: social71-postgres
     hostname: postgres
     ports:
       - "5432:5432"
@@ -14,3 +16,43 @@ services:
       POSTGRES_DB: social71
       POSTGRES_USER: social71
       POSTGRES_PASSWORD: social71
+
+  social71:
+    image: social71:0.0.4-SNAPSHOT
+    container_name: social71
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    environment:
+      JAVA_OPTS: "-Xss512k"
+      SPRING_PROFILES_ACTIVE: "localhost"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: social71-prometheus
+    depends_on:
+      - social71
+    ports:
+      - "9090:9090"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    volumes:
+      - "./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: social71-grafana
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./grafana/grafana-datasource.yml:/etc/grafana/provisioning/datasources/grafana-datasource.yml"
+      - "./grafana/grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/grafana-dashboard.yml"
+      - "./grafana/grafana-notifier-log-channel.yml:/etc/grafana/provisioning/notifiers/grafana-notifier.yml"
+      - "./grafana/dashboard-userwhisperendpoints.json:/etc/grafana/dashboards/userwhisperendpoints.json"
+      - "./grafana/dashboard-basicstats.json:/etc/grafana/dashboards/basicstats.json"
+      - "./grafana/dashboard-alert.json:/etc/grafana/dashboards/alert.json"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: "social71"
