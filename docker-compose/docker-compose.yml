@@ -12,6 +12,11 @@ services:
     hostname: postgres
     ports:
       - "5432:5432"
+    volumes:
+      - "./sql-scripts/001-create.sql:/docker-entrypoint-initdb.d/001-create.sql"
+      - "./sql-scripts/002-test-populate.sql:/docker-entrypoint-initdb.d/002-test-populate.sql"
+      - "./sql-scripts/003-create.sql:/docker-entrypoint-initdb.d/003-create.sql"
+      - "./sql-scripts/004-test-populate.sql:/docker-entrypoint-initdb.d/004-test-populate.sql"
     environment:
       POSTGRES_DB: social71
       POSTGRES_USER: social71
