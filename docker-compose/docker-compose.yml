@@ -23,7 +23,7 @@ services:
       POSTGRES_PASSWORD: social71
 
   social71:
-    image: social71:0.0.4-SNAPSHOT
+    image: social71:0.0.4
     container_name: social71
     depends_on:
       - postgres
@@ -31,7 +31,6 @@ services:
       - "8080:8080"
     environment:
       JAVA_OPTS: "-Xss512k"
-      SPRING_PROFILES_ACTIVE: "localhost"
 
   prometheus:
     image: prom/prometheus:latest
