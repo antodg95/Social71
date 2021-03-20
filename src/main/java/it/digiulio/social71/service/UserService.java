@@ -106,6 +106,8 @@ public class UserService implements ICrudService<User>{
         }
         userFound.setEmail(user.getEmail() == null ? userFound.getEmail() : user.getEmail());
 
+        userFound.setPassword(user.getPassword() == null ? userFound.getPassword() : encoder.encode(user.getPassword()));
+
         return userRepository.save(userFound);
     }
 
