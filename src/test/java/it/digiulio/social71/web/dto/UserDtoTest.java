@@ -2,7 +2,8 @@ package it.digiulio.social71.web.dto;
 
 import it.digiulio.social71.configuration.JacksonConfiguration;
 import it.digiulio.social71.models.User;
-import it.digiulio.social71.web.api.v1.dto.UserDTO;
+import it.digiulio.social71.web.api.v1.dto.request.UserDTORequest;
+import it.digiulio.social71.web.api.v1.dto.response.UserDTOResponse;
 import it.digiulio.social71.web.api.v1.mappings.UserDtoMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,18 +39,18 @@ public class UserDtoTest {
     }
 
     @Test
-    public void validateToDto() {
-        this.mm.typeMap(User.class, UserDTO.class).validate();
+    public void validateToDtoResponse() {
+        this.mm.typeMap(User.class, UserDTOResponse.class).validate();
     }
 
     @Test
-    public void validateFromDto() {
-        this.mm.typeMap(UserDTO.class, User.class).validate();
+    public void validateFromDtoRequest() {
+        this.mm.typeMap(UserDTORequest.class, User.class).validate();
     }
 
     @Test
-    public void testToDto() {
-        UserDTO userDTO = this.mm.map(user, UserDTO.class);
+    public void testToDtoResponse() {
+        UserDTOResponse userDTO = this.mm.map(user, UserDTOResponse.class);
 
         assertThat(userDTO.getUsername()).isEqualTo(user.getUsername());
         assertThat(userDTO.getEmail()).isEqualTo(user.getEmail());
@@ -57,8 +58,8 @@ public class UserDtoTest {
     }
 
     @Test
-    public void testFromDto() {
-        UserDTO userDTO = this.mm.map(user, UserDTO.class);
+    public void testFromDtoRequest() {
+        UserDTORequest userDTO = this.mm.map(user, UserDTORequest.class);
         User user1 = this.mm.map(userDTO, User.class);
 
         assertThat(user1.getUsername()).isEqualTo(user.getUsername());

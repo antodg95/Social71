@@ -8,7 +8,8 @@ import it.digiulio.social71.exception.BadServiceRequestException;
 import it.digiulio.social71.models.User;
 import it.digiulio.social71.service.UserService;
 import it.digiulio.social71.web.api.v1.controllers.UserController;
-import it.digiulio.social71.web.api.v1.dto.UserDTO;
+import it.digiulio.social71.web.api.v1.dto.request.UserDTORequest;
+import it.digiulio.social71.web.api.v1.dto.response.UserDTOResponse;
 import it.digiulio.social71.web.api.v1.mappings.UserDtoMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.context.SecurityContext;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -61,12 +61,12 @@ public class UserControllerTest {
 
     @Test
     public void testCreateWithAllValidInput() {
-        UserDTO userDto = new UserDTO();
+        UserDTORequest userDto = new UserDTORequest();
         userDto.setUsername("username-test");
         userDto.setEmail("test@test.com");
         userDto.setPassword("password");
 
-        UserDTO ret = userController.create(userDto);
+        UserDTOResponse ret = userController.create(userDto);
 
         assertThat(ret.getId()).isNotNull();
         assertThat(ret.getPassword()).isEqualTo(userDto.getPassword());
@@ -76,7 +76,7 @@ public class UserControllerTest {
 
     @Test
     public void testCreateWithExistingUsername() {
-        UserDTO userDto = new UserDTO();
+        UserDTORequest userDto = new UserDTORequest();
         userDto.setUsername("username-3");
         userDto.setEmail("test@test");
         userDto.setPassword("password");

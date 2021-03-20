@@ -1,4 +1,4 @@
-package it.digiulio.social71.web.api.v1.dto;
+package it.digiulio.social71.web.api.v1.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -10,8 +10,8 @@ import java.sql.Timestamp;
 
 @Data
 @NoArgsConstructor
-@Schema(name = "Whisper", description = "Whisper model")
-public class WhisperDTO {
+@Schema(name = "WhisperResponse", description = "Whisper response model")
+public class WhisperDTOResponse {
 
     @Nullable
     private Long id;
@@ -19,5 +19,6 @@ public class WhisperDTO {
     @NonNull
     private String text;
 
+    @NonNull
     private Timestamp createdOn;
 }

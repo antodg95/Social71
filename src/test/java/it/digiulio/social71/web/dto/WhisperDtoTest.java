@@ -3,7 +3,8 @@ package it.digiulio.social71.web.dto;
 import it.digiulio.social71.configuration.JacksonConfiguration;
 import it.digiulio.social71.models.User;
 import it.digiulio.social71.models.Whisper;
-import it.digiulio.social71.web.api.v1.dto.WhisperDTO;
+import it.digiulio.social71.web.api.v1.dto.request.WhisperDTORequest;
+import it.digiulio.social71.web.api.v1.dto.response.WhisperDTOResponse;
 import it.digiulio.social71.web.api.v1.mappings.WhisperDtoMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,18 +51,18 @@ public class WhisperDtoTest {
     }
 
     @Test
-    public void validateToDto() {
-        this.mm.typeMap(Whisper.class, WhisperDTO.class).validate();
+    public void validateToDtoResponse() {
+        this.mm.typeMap(Whisper.class, WhisperDTOResponse.class).validate();
     }
 
     @Test
-    public void validateFromDto() {
-        this.mm.typeMap(WhisperDTO.class, Whisper.class).validate();
+    public void validateFromDtoRequest() {
+        this.mm.typeMap(WhisperDTORequest.class, Whisper.class).validate();
     }
 
     @Test
-    public void testToDto() {
-        WhisperDTO whisperDTO = this.mm.map(whisper, WhisperDTO.class);
+    public void testToDtoResponse() {
+        WhisperDTOResponse whisperDTO = this.mm.map(whisper, WhisperDTOResponse.class);
 
         assertThat(whisperDTO.getId()).isEqualTo(whisper.getId());
         assertThat(whisperDTO.getText()).isEqualTo(whisper.getText());
@@ -69,12 +70,12 @@ public class WhisperDtoTest {
     }
 
     @Test
-    public void testFromDto() {
-        WhisperDTO whisperDTO = this.mm.map(whisper, WhisperDTO.class);
+    public void testFromDtoRequest() {
+        WhisperDTORequest whisperDTO = this.mm.map(whisper, WhisperDTORequest.class);
         Whisper whisper1 = this.mm.map(whisperDTO, Whisper.class);
 
-        assertThat(whisper1.getId()).isEqualTo(whisper.getId());
-        assertThat(whisper1.getCreatedOn()).isEqualTo(whisper.getCreatedOn());
+        assertThat(whisper1.getId()).isNull();
+        assertThat(whisper1.getCreatedOn()).isNull();
         assertThat(whisper1.getText()).isEqualTo(whisper.getText());
         assertThat(whisper1.getActive()).isNull();
     }

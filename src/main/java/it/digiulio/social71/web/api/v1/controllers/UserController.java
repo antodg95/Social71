@@ -13,7 +13,8 @@ import it.digiulio.social71.exception.NotFoundException;
 import it.digiulio.social71.exception.ValidationException;
 import it.digiulio.social71.models.User;
 import it.digiulio.social71.service.UserService;
-import it.digiulio.social71.web.api.v1.dto.UserDTO;
+import it.digiulio.social71.web.api.v1.dto.request.UserDTORequest;
+import it.digiulio.social71.web.api.v1.dto.response.UserDTOResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Slf4j
 @RequestMapping("/api/v1/users")
-public class UserController implements ICrudRestController<UserDTO>{
+public class UserController implements ICrudRestController<UserDTORequest, UserDTOResponse>{
 
     private final UserService userService;
     private final ModelMapper modelMapper;
@@ -37,12 +38,12 @@ public class UserController implements ICrudRestController<UserDTO>{
     @Override
     @Operation(summary = "Create User", tags = {"User"}, responses = {
             @ApiResponse(responseCode = "200", description = "The User", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = UserDTO.class))),
+                    schema = @Schema(implementation = UserDTOResponse.class))),
             @ApiResponse(responseCode = "400", description = "Bad Service Request Exception or Validation Exception")
     })
     @Timed(value = "user.create", description = "Time spent creating users", percentiles = {0.50, 0.75, 0.95, 0.98, 0.99, 0.999})
-    public UserDTO create(
-            @RequestBody(description = "User that needs to be created", required = true) UserDTO userDTO
+    public UserDTOResponse create(
+            @RequestBody(description = "User that needs to be created", required = true) UserDTORequest userDTO
     ) throws BadServiceRequestException, ValidationException {
         log.debug("POST: api/v1/users - create");
         log.trace("user: {}", userDTO);
@@ -51,18 +52,18 @@ public class UserController implements ICrudRestController<UserDTO>{
 
         user = this.userService.create(user);
 
-        return this.modelMapper.map(user, UserDTO.class);
+        return this.modelMapper.map(user, UserDTOResponse.class);
     }
 
     @Override
     @Operation(summary = "Find User by ID", tags = {"User"}, responses = {
             @ApiResponse(responseCode = "200", description = "The User", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = UserDTO.class))),
+                    schema = @Schema(implementation = UserDTOResponse.class))),
             @ApiResponse(responseCode = "400", description = "Bad Service Request, id must be greater than 0"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     @Timed(value = "user.findById", description = "Time spent finding users by id", percentiles = {0.50, 0.75, 0.95, 0.98, 0.99, 0.999})
-    public UserDTO findById(
+    public UserDTOResponse findById(
             @Parameter(description = "User's Id that need to be fetched. Must be > 0", required = true) Long id
     ) throws BadServiceRequestException, NotFoundException {
         log.debug("GET: api/v1/users/{id} - findById ");
@@ -77,20 +78,20 @@ public class UserController implements ICrudRestController<UserDTO>{
             throw new NotFoundException(id.toString(), "User");
         }
 
-        return this.modelMapper.map(user.get(), UserDTO.class);
+        return this.modelMapper.map(user.get(), UserDTOResponse.class);
     }
 
     @Override
     @Operation(summary = "Update User", tags = {"User"}, responses = {
             @ApiResponse(responseCode = "200", description = "The User", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = UserDTO.class))),
+                    schema = @Schema(implementation = UserDTOResponse.class))),
             @ApiResponse(responseCode = "400", description = "Bad Service Request Exception or Validation Exception."),
             @ApiResponse(responseCode = "403", description = "AuthorizationException"),
     })
     @Timed(value = "user.update", description = "Time spent updating users", percentiles = {0.50, 0.75, 0.95, 0.98, 0.99, 0.999})
-    public UserDTO update(
+    public UserDTOResponse update(
             @Parameter(description = "User's Id that need to be updated. Must be > 0", required = true) Long id,
-            @RequestBody(description = "User's fields that need to be updated", required = true) UserDTO userDTO
+            @RequestBody(description = "User's fields that need to be updated", required = true) UserDTORequest userDTO
     ) throws BadServiceRequestException, ValidationException, AuthorizationException {
         log.debug("PUT: api/v1/users/{id} - update");
         log.trace("id: {}, user:{}", id, userDTO);
@@ -99,23 +100,23 @@ public class UserController implements ICrudRestController<UserDTO>{
             throw new BadServiceRequestException("Id", id.toString(), List.of("must be greater than 0"));
         }
 
-        userDTO.setId(id);
         User user = this.modelMapper.map(userDTO, User.class);
+        user.setId(id);
         user = this.userService.update(user);
 
         log.trace("updated user: {}", user);
-        return this.modelMapper.map(user, UserDTO.class);
+        return this.modelMapper.map(user, UserDTOResponse.class);
     }
 
     @Override
     @Operation(summary = "Delete User", tags = {"User"}, responses = {
             @ApiResponse(responseCode = "200", description = "The User", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = UserDTO.class))),
+                    schema = @Schema(implementation = UserDTOResponse.class))),
             @ApiResponse(responseCode = "400", description = "Bad Service Request Exception: User doesn't exist or Id < 0"),
             @ApiResponse(responseCode = "403", description = "AuthorizationException"),
     })
     @Timed(value = "user.delete", description = "Time spent deleting users", percentiles = {0.50, 0.75, 0.95, 0.98, 0.99, 0.999})
-    public UserDTO delete(
+    public UserDTOResponse delete(
             @Parameter(description = "User's Id that need to be deleted. Must be > 0", required = true) Long id
     ) throws BadServiceRequestException, AuthorizationException {
         log.debug("DELETE: api/v1/users/{id} - delete");
@@ -128,22 +129,22 @@ public class UserController implements ICrudRestController<UserDTO>{
         User user = this.userService.delete(id);
 
         log.trace("deleted user: {}", user);
-        return this.modelMapper.map(user, UserDTO.class);
+        return this.modelMapper.map(user, UserDTOResponse.class);
     }
 
     @GetMapping
     @Operation(summary = "List all Users", tags = {"User"}, responses = {
             @ApiResponse(responseCode = "200", description = "List of all Users", content = @Content(mediaType = "application/json",
-                    schema = @Schema(allOf = UserDTO.class)))
+                    schema = @Schema(allOf = UserDTOResponse.class)))
     })
     @Timed(value = "user.findAll", description = "Time spent listing all users", percentiles = {0.50, 0.75, 0.95, 0.98, 0.99, 0.999})
-    public List<UserDTO> findAll() {
+    public List<UserDTOResponse> findAll() {
         log.debug("GET: api/v1/users - findAll");
 
         List<User> userList = this.userService.findAll();
         return userList
                 .stream()
-                .map(user -> this.modelMapper.map(user, UserDTO.class))
+                .map(user -> this.modelMapper.map(user, UserDTOResponse.class))
                 .collect(Collectors.toList());
     }
 }
