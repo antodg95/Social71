@@ -17,12 +17,15 @@ import it.digiulio.social71.web.api.v1.dto.response.WhisperDTOResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -137,7 +140,7 @@ public class WhisperController implements ICrudRestController<WhisperDTORequest,
             @ApiResponse(responseCode = "400", description = "Bad Service Request Exception: User doesn't exist or userId < 0")
     })
     @Timed(value = "whisper.findAllByUserId", description = "Time spent finding whispers by user id", percentiles = {0.50, 0.75, 0.95, 0.98, 0.99, 0.999})
-    public List<WhisperDTOResponse> findAllByUserId(
+    public ResponseEntity<Map<String, Object>> findAllByUserId(
             @Parameter(description = "User's Id to get his Whispers list", required = true) @PathVariable(name = "userId") Long userId
     ) throws BadServiceRequestException {
         log.debug("GET: api/v1/whispers/user/{userId} - findAllByUserId");
@@ -147,9 +150,13 @@ public class WhisperController implements ICrudRestController<WhisperDTORequest,
         }
 
         List<Whisper> whisperList = this.whisperService.findAllByUserId(userId);
-        return whisperList
+        List<WhisperDTOResponse> whisperDTOResponseList = whisperList
                 .stream()
                 .map(whisper -> this.modelMapper.map(whisper, WhisperDTOResponse.class))
                 .collect(Collectors.toList());
+        Map<String, Object> returnMap = new HashMap<>();
+        returnMap.put("resultSize", whisperDTOResponseList.size());
+        returnMap.put("whispers", whisperDTOResponseList);
+        return ResponseEntity.ok(returnMap);
     }
 }

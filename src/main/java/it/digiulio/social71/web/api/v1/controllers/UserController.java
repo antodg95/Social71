@@ -18,11 +18,14 @@ import it.digiulio.social71.web.api.v1.dto.response.UserDTOResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -138,13 +141,17 @@ public class UserController implements ICrudRestController<UserDTORequest, UserD
                     schema = @Schema(allOf = UserDTOResponse.class)))
     })
     @Timed(value = "user.findAll", description = "Time spent listing all users", percentiles = {0.50, 0.75, 0.95, 0.98, 0.99, 0.999})
-    public List<UserDTOResponse> findAll() {
+    public ResponseEntity<Map<String, Object>> findAll() {
         log.debug("GET: api/v1/users - findAll");
 
         List<User> userList = this.userService.findAll();
-        return userList
+        List<UserDTOResponse> userDTOResponseList = userList
                 .stream()
                 .map(user -> this.modelMapper.map(user, UserDTOResponse.class))
                 .collect(Collectors.toList());
+        Map<String, Object> returnMap = new HashMap<>();
+        returnMap.put("resultSize", userDTOResponseList.size());
+        returnMap.put("users", userDTOResponseList);
+        return ResponseEntity.ok(returnMap);
     }
 }
