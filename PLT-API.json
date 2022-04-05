@@ -1,0 +1,668 @@
+{
+	"openapi": "3.0.1",
+	"info": {
+		"title": "PLT MICROSERVICE API",
+		"version": "1.0"
+	},
+	"servers": [
+		{
+			"url": "http://localhost:8080",
+			"description": "Generated server url"
+		}
+	],
+	"paths": {
+		"/services/{serviceTypeDesc}/detailbytype": {
+			"post": {
+				"tags": [
+					"Service"
+				],
+				"summary": "Generate all the service JSON for the given service type description",
+				"operationId": "generateServiceDetailsJsonByServiceTypeDesc",
+				"parameters": [
+					{
+						"name": "serviceTypeDesc",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ServiceDetailsRequest"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Response will contain a list for both successfully generated service JSON and failed ones.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ServiceDetailsGenerationByTypeResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Response will be a String with the containing error.",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								},
+								"example": "PltServiceType not found for serviceTypeDesc: serviceTypeDesc"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/services/{serviceId}/{datasourceId}/detail": {
+			"post": {
+				"tags": [
+					"Service"
+				],
+				"summary": "Deprecated, use generateServiceDetailsJsonByServiceId instead.",
+				"operationId": "generateServiceDetailsJsonByIdAndDatasourceId",
+				"parameters": [
+					{
+						"name": "serviceId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					},
+					{
+						"name": "datasourceId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ServiceDetailsRequest"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ServiceDetailsGenerationResponse"
+								}
+							}
+						}
+					}
+				},
+				"deprecated": true
+			}
+		},
+		"/services/{serviceId}/detail": {
+			"post": {
+				"tags": [
+					"Service"
+				],
+				"summary": "Generate the service JSON for the given serviceId",
+				"operationId": "generateServiceDetailsJsonByServiceId",
+				"parameters": [
+					{
+						"name": "serviceId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The request body must be the one that is passed as in the example.",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ServiceDetailsRequest"
+							},
+							"example": {
+								"npsRestfulHost": "nps-orchestrator.nps",
+								"npsRestfulPort": "8181",
+								"npsRestfulProtocol": "http",
+								"userId": 1
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Response will contain the number of services generated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ServiceDetailsGenerationResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Response will be a String with the containing error.",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								},
+								"example": "Not found NPS service data - npsServiceJsonObj: ..."
+							}
+						}
+					}
+				}
+			}
+		},
+		"/services/detail": {
+			"post": {
+				"tags": [
+					"Service"
+				],
+				"summary": "Generate the service JSON for all the serviceDetails",
+				"operationId": "generateAllServiceDetailsJson",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ServiceDetailsRequest"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Response will contain the number of services generated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ServiceDetailsGenerationResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Response will be a String with the containing error.",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								},
+								"example": "Not found NPS service data - npsServiceJsonObj: ..."
+							}
+						}
+					}
+				}
+			}
+		},
+		"/services/delete/beneficiary/{serviceId}": {
+			"post": {
+				"tags": [
+					"Service"
+				],
+				"summary": "cencella beneficiario for the given serviceId",
+				"operationId": "cancellaBeneficiario",
+				"parameters": [
+					{
+						"name": "serviceId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Response will contain a static String: Beneficiario cancellato con successo!",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ServiceDeletionResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Response will be a String with the containing error.",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								},
+								"example": "Impossibile cancellare un servizio diverso dai premarcati!"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/checksum/verify": {
+			"post": {
+				"tags": [
+					"Checksum"
+				],
+				"summary": "Verify if the checksum passed in input is the same stored in DB",
+				"operationId": "verifyChecksum",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ChecksumRequest"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Response 'result' value will contain \"OK\" if same checksum in DB, \"Bad Request\" otherwise",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChecksumResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Response will be a String with the containing error.",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								},
+								"example": "Global Version for menu not found"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/services/get/{serviceId}": {
+			"get": {
+				"tags": [
+					"Service"
+				],
+				"summary": "Get the service JSON for given serviceId",
+				"operationId": "getServiceDetailsById",
+				"parameters": [
+					{
+						"name": "serviceId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Response will contain the service JSON as a String ",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Response will be a String with the containing error.",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								},
+								"example": "serviceDetail with serviceId: 71 not found!"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/servicename/get/{serviceId}": {
+			"get": {
+				"tags": [
+					"ServiceName"
+				],
+				"summary": "Get serviceName by id",
+				"operationId": "getServiceNameById",
+				"parameters": [
+					{
+						"name": "serviceId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Response will contain a ServiceNameResponse with the requested data.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ServiceNameResponse"
+								},
+								"example": {
+									"serviceId": 359,
+									"serviceName": "NT MOBILE"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Response will be a String with the containing error.",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								},
+								"example": "serviceName with serviceId: 710 not found"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/servicename/get/all": {
+			"get": {
+				"tags": [
+					"ServiceName"
+				],
+				"summary": "Get all existing serviceNames",
+				"operationId": "getAllServiceNames",
+				"responses": {
+					"200": {
+						"description": "Response will contain a ServiceNamesResponse which is a List of ServiceNameResponse.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ServiceNamesResponse"
+								},
+								"example": "{\"services\":[{\"serviceId\":359,\"serviceName\":\"NT MOBILE\"},{\"serviceId\":358,\"serviceName\":\"RABONA MOBILE\", ...}"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/resources/{type}/{resourceId}": {
+			"get": {
+				"tags": [
+					"Resource"
+				],
+				"summary": "Get static resource by id, type parameter is useless",
+				"operationId": "getStaticResources",
+				"parameters": [
+					{
+						"name": "type",
+						"in": "path",
+						"description": "Useless parameter",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "resourceId",
+						"in": "path",
+						"description": "reourcesId to get",
+						"required": true,
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Response will contain the static resource in plain String format",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								},
+								"example": "ewogICAgIm51bWJlck9mRWxlbWVudHMiOiA1MDAsCiAgICAiZWxlbWVudHNMaXN0IjogWwogICAg..."
+							}
+						}
+					},
+					"404": {
+						"description": "NOT FOUND. Response will be a String with the containing error.",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								},
+								"example": "Resources with id: 71 not found"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/get/menu": {
+			"get": {
+				"tags": [
+					"Menu"
+				],
+				"summary": "Get last version for PLT MENU SERVICE",
+				"operationId": "getServiceMenu",
+				"responses": {
+					"200": {
+						"description": "Response will contain the serviceMenu JSON in plain String format",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								},
+								"example": "{version: 3.0.0, ...}"
+							}
+						}
+					},
+					"404": {
+						"description": "NOT FOUND. Response will be a String with the containing error.",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								},
+								"example": "ServiceMenu not found"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/checksum/newchecksum": {
+			"get": {
+				"tags": [
+					"Checksum"
+				],
+				"summary": "Get a new checksum based on information stored in DB",
+				"operationId": "getNewChecksum",
+				"responses": {
+					"200": {
+						"description": "Response 'result' value will contain the current checksum in DB",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChecksumResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Response will be a String with the containing error.",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								},
+								"example": "Global Version for menu not found"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"ServiceDetailsGenerationByTypeResponse": {
+				"type": "object",
+				"properties": {
+					"updatedServiceList": {
+						"type": "array",
+						"items": {
+							"type": "integer",
+							"format": "int32"
+						}
+					},
+					"faildeServiceList": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/UpdateFailResponse"
+						}
+					}
+				}
+			},
+			"UpdateFailResponse": {
+				"type": "object",
+				"properties": {
+					"serviceId": {
+						"type": "integer",
+						"format": "int32"
+					},
+					"message": {
+						"type": "string"
+					}
+				}
+			},
+			"ServiceDetailsRequest": {
+				"type": "object",
+				"properties": {
+					"npsRestfulHost": {
+						"type": "string"
+					},
+					"npsRestfulPort": {
+						"type": "string"
+					},
+					"npsRestfulProtocol": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "integer",
+						"format": "int32"
+					},
+					"beneficiaryUsername": {
+						"type": "string"
+					},
+					"beneficiarPassword": {
+						"type": "string"
+					},
+					"allServiceDetailsPath": {
+						"type": "string"
+					},
+					"serviceDetailsByIdPath": {
+						"type": "string"
+					},
+					"beneficiariesByServiceId": {
+						"type": "string"
+					},
+					"beneficiariesByAccountCode": {
+						"type": "string"
+					}
+				}
+			},
+			"ServiceDetailsGenerationResponse": {
+				"type": "object",
+				"properties": {
+					"npsServiceNr": {
+						"type": "integer",
+						"format": "int32"
+					},
+					"pltServiceDetailsJsonGeneratedNr": {
+						"type": "integer",
+						"format": "int32"
+					}
+				}
+			},
+			"ServiceDeletionResponse": {
+				"type": "object",
+				"properties": {
+					"result": {
+						"type": "string"
+					}
+				}
+			},
+			"ChecksumResponse": {
+				"type": "object",
+				"properties": {
+					"result": {
+						"type": "string"
+					}
+				},
+				"description": "Model for Checksum Controller response"
+			},
+			"ChecksumRequest": {
+				"type": "object",
+				"properties": {
+					"checksum": {
+						"type": "string"
+					}
+				},
+				"description": "Model for Checksum Controller"
+			},
+			"ServiceNameResponse": {
+				"type": "object",
+				"properties": {
+					"serviceId": {
+						"type": "integer",
+						"format": "int32"
+					},
+					"serviceName": {
+						"type": "string"
+					}
+				}
+			},
+			"ServiceNamesResponse": {
+				"type": "object",
+				"properties": {
+					"services": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ServiceNameResponse"
+						}
+					}
+				}
+			}
+		}
+	}
+}
